@@ -10,15 +10,11 @@ export default async function handler(req, res) {
 
     const { image } = req.body;
 
-    if (!image) {
-      return res.status(400).json({ error: "No image provided" });
-    }
-
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
 
-    const completion = await client.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
@@ -32,7 +28,7 @@ export default async function handler(req, res) {
     });
 
     res.status(200).json({
-      result: completion.choices[0].message.content
+      result: response.choices[0].message.content
     });
 
   } catch (error) {
