@@ -4,7 +4,7 @@ async function analyzeImage() {
   const resultDiv = document.getElementById("result");
 
   if (!fileInput.files.length) {
-    alert("Please upload a food image first.");
+    alert("Please upload an image first");
     return;
   }
 
@@ -13,11 +13,11 @@ async function analyzeImage() {
 
   reader.onload = async function () {
 
-    const base64Image = reader.result;
+    const base64 = reader.result;
+
+    resultDiv.innerText = "Analyzing food...";
 
     try {
-
-      resultDiv.innerText = "Analyzing food...";
 
       const response = await fetch("/api/analyze-food", {
         method: "POST",
@@ -25,22 +25,17 @@ async function analyzeImage() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          image: base64Image
+          image: base64
         })
       });
 
       const data = await response.json();
 
-      if (data.result) {
-        resultDiv.innerText = data.result;
-      } else {
-        resultDiv.innerText = "Failed to analyze food.";
-      }
+      resultDiv.innerText = data.result;
 
-    } catch (error) {
+    } catch (err) {
 
-      console.error(error);
-      resultDiv.innerText = "Error analyzing image.";
+      resultDiv.innerText = "Error analyzing food.";
 
     }
 
