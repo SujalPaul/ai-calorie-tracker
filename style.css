@@ -1,34 +1,61 @@
 body{
+
 font-family: Arial;
+
 background:#f4f4f4;
+
 text-align:center;
-margin-top:100px;
+
+margin-top:60px;
+
 }
 
 .container{
+
 background:white;
-padding:20px;
-width:300px;
+
+width:400px;
+
 margin:auto;
+
+padding:30px;
+
 border-radius:10px;
+
 box-shadow:0 0 10px rgba(0,0,0,0.2);
+
 }
 
 input{
-width:80%;
+
+width:90%;
+
 padding:10px;
+
 margin:10px;
+
 }
 
 button{
+
 padding:10px 20px;
-background:green;
+
+background:#28a745;
+
 color:white;
+
 border:none;
+
+border-radius:5px;
+
 cursor:pointer;
+
 }
 
 #result{
+
 margin-top:20px;
+
 font-size:18px;
+
 }
