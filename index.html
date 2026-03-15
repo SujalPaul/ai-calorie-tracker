@@ -2,28 +2,21 @@
 <html>
 
 <head>
-
 <title>AI Calorie Tracker</title>
-
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
 <h1>AI Calorie Tracker</h1>
 
-<div class="container">
+<input type="file" id="foodImage">
 
-<input type="file" id="imageInput">
+<button onclick="analyzeFood()">
+Analyze Food
+</button>
 
-<br><br>
-
-<button onclick="analyzeImage()">Analyze Food</button>
-
-<div id="result"></div>
-
-</div>
+<pre id="result"></pre>
 
 <script src="script.js"></script>
 
