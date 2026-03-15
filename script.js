@@ -1,43 +1,33 @@
-async function analyzeImage() {
+async function analyzeFood() {
 
-  const fileInput = document.getElementById("imageInput");
-  const resultDiv = document.getElementById("result");
+  const fileInput = document.getElementById("foodImage");
+  const file = fileInput.files[0];
 
-  if (!fileInput.files.length) {
-    alert("Please upload an image first");
+  if (!file) {
+    alert("Please upload an image");
     return;
   }
 
-  const file = fileInput.files[0];
   const reader = new FileReader();
 
-  reader.onload = async function () {
+  reader.onloadend = async () => {
 
     const base64 = reader.result;
 
-    resultDiv.innerText = "Analyzing food...";
+    const response = await fetch("/api/analyze-food", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        image: base64
+      })
+    });
 
-    try {
+    const data = await response.json();
 
-      const response = await fetch("/api/analyze-food", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          image: base64
-        })
-      });
-
-      const data = await response.json();
-
-      resultDiv.innerText = data.result;
-
-    } catch (err) {
-
-      resultDiv.innerText = "Error analyzing food.";
-
-    }
+    document.getElementById("result").textContent =
+      data.result || data.error;
 
   };
 
