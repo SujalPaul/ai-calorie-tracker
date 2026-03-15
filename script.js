@@ -10,7 +10,7 @@ const base64 = reader.result;
 
 const response = await fetch("/api/analyze-food", {
 
-method: "POST",
+method:"POST",
 
 headers:{
 "Content-Type":"application/json"
