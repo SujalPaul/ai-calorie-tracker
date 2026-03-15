@@ -1,37 +1,33 @@
 async function analyzeImage(){
 
-const fileInput = document.getElementById("imageInput");
+const file = document.getElementById("imageInput").files[0];
 
-const file = fileInput.files[0];
+const reader = new FileReader();
 
-if(!file){
+reader.onload = async function(){
 
-alert("Please upload an image");
+const base64 = reader.result;
 
-return;
+const response = await fetch("/api/analyze-food", {
 
-}
+method: "POST",
 
-const formData = new FormData();
+headers:{
+"Content-Type":"application/json"
+},
 
-formData.append("image", file);
+body: JSON.stringify({
+image: base64
+})
 
-const response = await fetch(
-
-"http://localhost:3000/analyze-food",
-
-{
-
-method:"POST",
-
-body:formData
-
-}
-
-);
+});
 
 const data = await response.json();
 
 document.getElementById("result").innerText = data.result;
+
+};
+
+reader.readAsDataURL(file);
 
 }
