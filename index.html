@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <title>AI Calorie Tracker</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
@@ -11,15 +15,25 @@
 
 <div class="container">
 
+<h2>Search Food</h2>
+
 <input id="foodInput" placeholder="Enter food name">
 
 <button onclick="getNutrition()">Get Nutrition</button>
+
+<h2>Upload Food Image</h2>
+
+<input type="file" id="imageInput">
+
+<button onclick="analyzeImage()">Detect Food</button>
 
 <div id="result"></div>
 
 </div>
 
+<script src="config.js"></script>
 <script src="script.js"></script>
 
 </body>
+
 </html>
