@@ -1,10 +1,15 @@
 {
   "name": "ai-calorie-tracker",
   "version": "1.0.0",
+  "description": "AI food calorie analyzer using OpenAI",
   "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "express": "^4.19.2",
-    "multer": "^1.4.5",
-    "openai": "^4.52.0"
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.56.0"
   }
 }
