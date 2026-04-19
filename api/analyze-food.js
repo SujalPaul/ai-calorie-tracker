@@ -7,36 +7,41 @@ export default async function handler(req, res) {
   }
 
   try {
-
     const { image } = req.body;
 
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
 
-    const response = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: [
         {
           role: "user",
           content: [
-            { type: "text", text: "Identify this food and estimate calories, protein, carbs and fat." },
-            { type: "image_url", image_url: { url: image } }
+            {
+              type: "input_text",
+              text: "Identify this food and estimate calories, protein, carbs and fat."
+            },
+            {
+              type: "input_image",
+              image_url: image
+            }
           ]
         }
       ]
     });
 
     res.status(200).json({
-      result: response.choices[0].message.content
+      result: response.output_text
     });
 
   } catch (error) {
 
-    console.error(error);
+    console.error("FULL ERROR:", error);
 
     res.status(500).json({
-      error: "AI analysis failed"
+      error: error.message
     });
 
   }
