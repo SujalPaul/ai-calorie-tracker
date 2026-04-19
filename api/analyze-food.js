@@ -25,7 +25,7 @@ export default async function handler(req, res) {
             },
             {
               type: "input_image",
-              image_url: image
+              image_url: image   // ✅ IMPORTANT: direct base64 here
             }
           ]
         }
