@@ -1,16 +1,32 @@
 const fileInput = document.getElementById("foodImage");
 const preview = document.getElementById("preview");
 const loader = document.getElementById("loader");
+const toggle = document.getElementById("themeToggle");
 
 // Image preview
 fileInput.addEventListener("change", () => {
   const file = fileInput.files[0];
-
   if (file) {
     preview.src = URL.createObjectURL(file);
     preview.classList.remove("hidden");
   }
 });
+
+// Dark mode toggle
+toggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  toggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+});
+
+// Emoji generator
+function getEmoji(food) {
+  food = food.toLowerCase();
+  if (food.includes("pizza")) return "🍕";
+  if (food.includes("burger")) return "🍔";
+  if (food.includes("rice") || food.includes("biryani")) return "🍚";
+  if (food.includes("pasta") || food.includes("mac")) return "🍝";
+  return "🍽️";
+}
 
 async function analyzeFood() {
 
@@ -30,9 +46,7 @@ async function analyzeFood() {
   try {
     const response = await fetch("/api/analyze-food", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ food })
     });
 
@@ -46,19 +60,13 @@ async function analyzeFood() {
 
       resultText.innerHTML = `
         <div class="nutrition">
-          <h2>${parsed.name}</h2>
+          <h2>${getEmoji(parsed.name)} ${parsed.name}</h2>
           <div class="calories">${parsed.calories} kcal</div>
 
           <div class="macros">
-            <div class="macro-card">
-              <strong>Protein</strong><br>${parsed.protein}g
-            </div>
-            <div class="macro-card">
-              <strong>Carbs</strong><br>${parsed.carbs}g
-            </div>
-            <div class="macro-card">
-              <strong>Fat</strong><br>${parsed.fat}g
-            </div>
+            <div class="macro-card">Protein<br><strong>${parsed.protein}g</strong></div>
+            <div class="macro-card">Carbs<br><strong>${parsed.carbs}g</strong></div>
+            <div class="macro-card">Fat<br><strong>${parsed.fat}g</strong></div>
           </div>
         </div>
       `;
