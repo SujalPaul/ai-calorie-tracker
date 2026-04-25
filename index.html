@@ -10,9 +10,13 @@
     <div class="card">
 
       <h1>🍽️ AI Calorie Tracker</h1>
-      <p class="subtitle">Enter a food and get nutrition instantly</p>
+      <p class="subtitle">Upload image + describe food</p>
 
-      <input type="text" id="foodName" placeholder="e.g. Pizza, Burger, Rice">
+      <input type="file" id="foodImage" accept="image/*">
+
+      <img id="preview" class="hidden">
+
+      <input type="text" id="foodName" placeholder="Describe the food (e.g. chicken biryani, paneer pizza)">
 
       <button onclick="analyzeFood()">Analyze Food</button>
 
