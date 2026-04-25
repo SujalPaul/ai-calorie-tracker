@@ -1,37 +1,59 @@
+:root {
+  --bg: linear-gradient(135deg, #667eea, #764ba2);
+  --card: rgba(255,255,255,0.9);
+  --text: #000;
+}
+
+body.dark {
+  --bg: #121212;
+  --card: rgba(30,30,30,0.9);
+  --text: #fff;
+}
+
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--bg);
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: 0.3s;
+  color: var(--text);
 }
 
-/* Glass Card */
+/* Toggle button */
+#themeToggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: none;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Card */
 .card {
   backdrop-filter: blur(20px);
-  background: rgba(255,255,255,0.9);
+  background: var(--card);
   padding: 35px;
   border-radius: 20px;
   width: 350px;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-  transition: 0.3s;
+  animation: fadeIn 0.5s ease;
 }
 
-h1 {
-  margin-bottom: 10px;
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(10px);}
+  to {opacity:1; transform: translateY(0);}
 }
 
 .subtitle {
   color: gray;
   margin-bottom: 20px;
-}
-
-/* Inputs */
-input[type="file"] {
-  margin-bottom: 10px;
 }
 
 input[type="text"] {
@@ -41,25 +63,16 @@ input[type="text"] {
   border: none;
   outline: none;
   background: #f1f3f6;
-  font-size: 16px;
   margin-bottom: 15px;
-  transition: 0.3s;
 }
 
-input[type="text"]:focus {
-  background: white;
-  box-shadow: 0 0 0 2px #667eea;
-}
-
-/* Button */
 button {
   width: 100%;
   padding: 12px;
-  border: none;
   border-radius: 10px;
+  border: none;
   background: linear-gradient(135deg, #667eea, #5a67d8);
   color: white;
-  font-size: 16px;
   cursor: pointer;
   transition: 0.3s;
 }
@@ -90,34 +103,24 @@ button:hover {
   100% { transform: rotate(360deg); }
 }
 
-/* Result */
-.result {
-  margin-top: 20px;
-}
-
-/* Nutrition UI */
-.nutrition h2 {
-  margin-bottom: 5px;
-}
-
+/* Nutrition */
 .calories {
   font-size: 28px;
   font-weight: bold;
   color: #667eea;
-  margin-bottom: 15px;
 }
 
 .macros {
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 }
 
 .macro-card {
   flex: 1;
-  background: #eef1ff;
   padding: 12px;
   border-radius: 12px;
-  text-align: center;
+  background: #eef1ff;
   transition: 0.3s;
 }
 
@@ -128,4 +131,12 @@ button:hover {
 /* Utility */
 .hidden {
   display: none;
+}
+
+/* Mobile */
+@media (max-width: 400px) {
+  .card {
+    width: 90%;
+    padding: 25px;
+  }
 }
