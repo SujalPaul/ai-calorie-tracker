@@ -8,19 +8,16 @@ body {
   justify-content: center;
 }
 
-.container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
+/* Glass Card */
 .card {
-  background: white;
-  padding: 40px;
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.9);
+  padding: 35px;
   border-radius: 20px;
   width: 350px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  transition: 0.3s;
 }
 
 h1 {
@@ -32,6 +29,7 @@ h1 {
   margin-bottom: 20px;
 }
 
+/* Inputs */
 input[type="file"] {
   margin-bottom: 10px;
 }
@@ -53,12 +51,13 @@ input[type="text"]:focus {
   box-shadow: 0 0 0 2px #667eea;
 }
 
+/* Button */
 button {
   width: 100%;
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background: #667eea;
+  background: linear-gradient(135deg, #667eea, #5a67d8);
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -66,23 +65,67 @@ button {
 }
 
 button:hover {
-  background: #5a67d8;
+  transform: scale(1.03);
 }
 
+/* Image */
 #preview {
   width: 100%;
   margin: 10px 0;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
+/* Loader */
+.loader {
+  margin: 20px auto;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Result */
 .result {
   margin-top: 20px;
-  padding: 15px;
-  border-radius: 12px;
-  background: #f7f7f7;
-  text-align: left;
 }
 
+/* Nutrition UI */
+.nutrition h2 {
+  margin-bottom: 5px;
+}
+
+.calories {
+  font-size: 28px;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 15px;
+}
+
+.macros {
+  display: flex;
+  gap: 10px;
+}
+
+.macro-card {
+  flex: 1;
+  background: #eef1ff;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.macro-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Utility */
 .hidden {
   display: none;
 }
