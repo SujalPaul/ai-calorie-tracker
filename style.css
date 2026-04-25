@@ -1,15 +1,76 @@
 body {
-  font-family: Arial;
-  text-align: center;
-  margin-top: 60px;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-button {
-  padding: 10px 20px;
+/* Container */
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Main Card */
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Title */
+h1 {
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: gray;
+  margin-bottom: 20px;
+}
+
+/* Input */
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 15px;
   font-size: 16px;
 }
 
-#result {
+/* Button */
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #667eea;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #5a67d8;
+}
+
+/* Result Card */
+.result {
   margin-top: 20px;
-  font-size: 18px;
+  padding: 15px;
+  border-radius: 12px;
+  background: #f7f7f7;
+  text-align: left;
+}
+
+.hidden {
+  display: none;
 }
