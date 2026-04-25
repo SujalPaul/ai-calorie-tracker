@@ -1,36 +1,33 @@
 async function analyzeFood() {
 
-  const fileInput = document.getElementById("foodImage");
-  const file = fileInput.files[0];
+  const food = document.getElementById("foodName").value;
 
-  if (!file) {
-    alert("Please upload an image");
+  if (!food) {
+    alert("Please enter a food name");
     return;
   }
 
-  const reader = new FileReader();
+  const resultCard = document.getElementById("resultCard");
+  const resultText = document.getElementById("resultText");
 
-  reader.onloadend = async () => {
+  resultCard.classList.remove("hidden");
+  resultText.textContent = "Analyzing...";
 
-    const base64 = reader.result;
-
+  try {
     const response = await fetch("/api/analyze-food", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        image: base64
-      })
+      body: JSON.stringify({ food })
     });
 
     const data = await response.json();
 
-    document.getElementById("result").textContent =
-      data.result || data.error;
+    resultText.textContent = data.result || data.error;
 
-  };
-
-  reader.readAsDataURL(file);
+  } catch (error) {
+    resultText.textContent = "Error occurred";
+  }
 
 }
