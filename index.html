@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-<title>AI Calorie Tracker</title>
-<link rel="stylesheet" href="style.css">
+  <title>AI Calorie Tracker</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<h1>AI Calorie Tracker</h1>
+  <div class="container">
+    <div class="card">
 
-<input type="file" id="foodImage">
+      <h1>🍽️ AI Calorie Tracker</h1>
+      <p class="subtitle">Enter a food and get nutrition instantly</p>
 
-<button onclick="analyzeFood()">
-Analyze Food
-</button>
+      <input type="text" id="foodName" placeholder="e.g. Pizza, Burger, Rice">
 
-<pre id="result"></pre>
+      <button onclick="analyzeFood()">Analyze Food</button>
 
-<script src="script.js"></script>
+      <div id="resultCard" class="result hidden">
+        <h3>Result</h3>
+        <p id="resultText"></p>
+      </div>
 
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
-
 </html>
