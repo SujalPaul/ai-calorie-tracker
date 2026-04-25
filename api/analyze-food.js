@@ -10,22 +10,25 @@ export default async function handler(req, res) {
     const { image } = req.body;
 
     const client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: "https://api.groq.com/openai/v1"
     });
 
-    const response = await client.responses.create({
-      model: "gpt-4.1-mini",
-      input: [
+    const response = await client.chat.completions.create({
+      model: "llava-v1.5-7b-4096-preview",
+      messages: [
         {
           role: "user",
           content: [
             {
-              type: "input_text",
+              type: "text",
               text: "Identify this food and estimate calories, protein, carbs and fat."
             },
             {
-              type: "input_image",
-              image_url: image   // ✅ IMPORTANT: direct base64 here
+              type: "image_url",
+              image_url: {
+                url: image
+              }
             }
           ]
         }
@@ -33,12 +36,12 @@ export default async function handler(req, res) {
     });
 
     res.status(200).json({
-      result: response.output_text
+      result: response.choices[0].message.content
     });
 
   } catch (error) {
 
-    console.error("FULL ERROR:", error);
+    console.error("ERROR:", error);
 
     res.status(500).json({
       error: error.message
