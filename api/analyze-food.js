@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { food, hasImage } = req.body;
+    const { food } = req.body;
 
     if (!food) {
       return res.status(400).json({ error: "Food description required" });
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     const prompt = `
 A user uploaded an image of food and described it as: "${food}".
 
-Based on this, estimate:
+Estimate:
 - Calories
 - Protein
 - Carbs
@@ -48,5 +48,4 @@ Give a clean, short answer.
     console.error(error);
     res.status(500).json({ error: error.message });
   }
-
 }
