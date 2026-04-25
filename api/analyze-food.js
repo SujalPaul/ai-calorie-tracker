@@ -7,30 +7,35 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { image } = req.body;
+    const { food, hasImage } = req.body;
+
+    if (!food) {
+      return res.status(400).json({ error: "Food description required" });
+    }
 
     const client = new OpenAI({
       apiKey: process.env.GROQ_API_KEY,
       baseURL: "https://api.groq.com/openai/v1"
     });
 
+    const prompt = `
+A user uploaded an image of food and described it as: "${food}".
+
+Based on this, estimate:
+- Calories
+- Protein
+- Carbs
+- Fat
+
+Give a clean, short answer.
+    `;
+
     const response = await client.chat.completions.create({
-      model: "llama-3.2-11b-vision-preview",
+      model: "llama3-8b-8192",
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: "Identify this food and estimate calories, protein, carbs and fat."
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: image
-              }
-            }
-          ]
+          content: prompt
         }
       ]
     });
@@ -40,7 +45,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("ERROR:", error);
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
 
