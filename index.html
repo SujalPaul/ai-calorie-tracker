@@ -16,13 +16,16 @@
 
       <img id="preview" class="hidden">
 
-      <input type="text" id="foodName" placeholder="Describe the food (e.g. chicken biryani, paneer pizza)">
+      <input type="text" id="foodName" placeholder="e.g. chicken biryani, paneer pizza">
 
       <button onclick="analyzeFood()">Analyze Food</button>
 
+      <!-- Loading -->
+      <div id="loader" class="loader hidden"></div>
+
+      <!-- Result -->
       <div id="resultCard" class="result hidden">
-        <h3>Result</h3>
-        <p id="resultText"></p>
+        <div id="resultText"></div>
       </div>
 
     </div>
