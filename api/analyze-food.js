@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     });
 
     const response = await client.chat.completions.create({
-      model: "llava-v1.5-7b-4096-preview",
+      model: "llama-3.2-11b-vision-preview",
       messages: [
         {
           role: "user",
@@ -40,13 +40,8 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-
     console.error("ERROR:", error);
-
-    res.status(500).json({
-      error: error.message
-    });
-
+    res.status(500).json({ error: error.message });
   }
 
 }
