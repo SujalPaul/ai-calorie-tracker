@@ -1,5 +1,6 @@
 const fileInput = document.getElementById("foodImage");
 const preview = document.getElementById("preview");
+const loader = document.getElementById("loader");
 
 // Image preview
 fileInput.addEventListener("change", () => {
@@ -23,8 +24,8 @@ async function analyzeFood() {
   const resultCard = document.getElementById("resultCard");
   const resultText = document.getElementById("resultText");
 
-  resultCard.classList.remove("hidden");
-  resultText.textContent = "Analyzing...";
+  resultCard.classList.add("hidden");
+  loader.classList.remove("hidden");
 
   try {
     const response = await fetch("/api/analyze-food", {
@@ -37,9 +38,37 @@ async function analyzeFood() {
 
     const data = await response.json();
 
-    resultText.textContent = data.result || data.error;
+    loader.classList.add("hidden");
+    resultCard.classList.remove("hidden");
+
+    try {
+      const parsed = JSON.parse(data.result);
+
+      resultText.innerHTML = `
+        <div class="nutrition">
+          <h2>${parsed.name}</h2>
+          <div class="calories">${parsed.calories} kcal</div>
+
+          <div class="macros">
+            <div class="macro-card">
+              <strong>Protein</strong><br>${parsed.protein}g
+            </div>
+            <div class="macro-card">
+              <strong>Carbs</strong><br>${parsed.carbs}g
+            </div>
+            <div class="macro-card">
+              <strong>Fat</strong><br>${parsed.fat}g
+            </div>
+          </div>
+        </div>
+      `;
+    } catch {
+      resultText.textContent = data.result;
+    }
 
   } catch (error) {
+    loader.classList.add("hidden");
+    resultCard.classList.remove("hidden");
     resultText.textContent = "Error occurred";
   }
 }
