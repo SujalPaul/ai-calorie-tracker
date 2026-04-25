@@ -6,10 +6,12 @@
 </head>
 <body>
 
+  <button id="themeToggle">🌙</button>
+
   <div class="container">
     <div class="card">
 
-      <h1>🍽️ AI Calorie Tracker</h1>
+      <h1 id="title">🍽️ AI Calorie Tracker</h1>
       <p class="subtitle">Upload image + describe food</p>
 
       <input type="file" id="foodImage" accept="image/*">
@@ -20,10 +22,8 @@
 
       <button onclick="analyzeFood()">Analyze Food</button>
 
-      <!-- Loading -->
       <div id="loader" class="loader hidden"></div>
 
-      <!-- Result -->
       <div id="resultCard" class="result hidden">
         <div id="resultText"></div>
       </div>
