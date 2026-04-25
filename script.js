@@ -1,9 +1,22 @@
+const fileInput = document.getElementById("foodImage");
+const preview = document.getElementById("preview");
+
+// Image preview
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+
+  if (file) {
+    preview.src = URL.createObjectURL(file);
+    preview.classList.remove("hidden");
+  }
+});
+
 async function analyzeFood() {
 
   const food = document.getElementById("foodName").value;
 
   if (!food) {
-    alert("Please enter a food name");
+    alert("Please describe the food");
     return;
   }
 
@@ -29,5 +42,4 @@ async function analyzeFood() {
   } catch (error) {
     resultText.textContent = "Error occurred";
   }
-
 }
