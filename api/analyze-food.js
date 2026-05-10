@@ -3,15 +3,14 @@ import OpenAI from "openai";
 export default async function handler(req, res) {
 
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
   }
 
   try {
-    const { food } = req.body;
 
-    if (!food) {
-      return res.status(400).json({ error: "Food description required" });
-    }
+    const { food } = req.body;
 
     const client = new OpenAI({
       apiKey: process.env.GROQ_API_KEY,
@@ -19,33 +18,47 @@ export default async function handler(req, res) {
     });
 
     const prompt = `
-A user uploaded an image of food and described it as: "${food}".
+Return ONLY valid JSON.
 
-Estimate:
-- Calories
-- Protein
-- Carbs
-- Fat
+Food: ${food}
 
-Give a clean, short answer.
-    `;
+Format:
+{
+  "name": "food name",
+  "calories": 500,
+  "protein": 20,
+  "carbs": 60,
+  "fat": 10
+}
+`;
 
-    const response = await client.chat.completions.create({
-      model: "llama-3.1-8b-instant",
-      messages: [
-        {
-          role: "user",
-          content: prompt
-        }
-      ]
-    });
+    const response =
+      await client.chat.completions.create({
+
+        model: "llama-3.1-8b-instant",
+
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+
+        temperature: 0.2
+      });
 
     res.status(200).json({
       result: response.choices[0].message.content
     });
 
   } catch (error) {
+
     console.error(error);
-    res.status(500).json({ error: error.message });
+
+    res.status(500).json({
+      error: error.message
+    });
+
   }
+
 }
