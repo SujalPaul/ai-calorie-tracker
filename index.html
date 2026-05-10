@@ -1,34 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AI Calorie Tracker</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutriVision AI</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <button id="themeToggle">🌙</button>
+  <!-- Theme Toggle -->
+  <button id="themeToggle" class="theme-toggle">🌙</button>
 
-  <div class="container">
-    <div class="card">
+  <div class="app">
 
-      <h1 id="title">🍽️ AI Calorie Tracker</h1>
-      <p class="subtitle">Upload image + describe food</p>
+    <!-- Left Side -->
+    <div class="glass-card main-card">
 
-      <input type="file" id="foodImage" accept="image/*">
+      <div class="logo">
+        <div class="logo-circle">🍽️</div>
+        <div>
+          <h1>NutriVision AI</h1>
+          <p>Smart calorie estimation powered by AI</p>
+        </div>
+      </div>
 
-      <img id="preview" class="hidden">
+      <div class="upload-section">
 
-      <input type="text" id="foodName" placeholder="e.g. chicken biryani, paneer pizza">
+        <label class="upload-box">
+          <input type="file" id="foodImage" accept="image/*">
+          <span>📸 Upload Food Image</span>
+        </label>
 
-      <button onclick="analyzeFood()">Analyze Food</button>
+        <img id="preview" class="preview hidden">
+
+        <input
+          type="text"
+          id="foodName"
+          placeholder="Describe your food..."
+        >
+
+        <button id="analyzeBtn" onclick="analyzeFood()">
+          Analyze Nutrition
+        </button>
+
+      </div>
 
       <div id="loader" class="loader hidden"></div>
 
+      <!-- Result -->
       <div id="resultCard" class="result hidden">
         <div id="resultText"></div>
       </div>
 
     </div>
+
+    <!-- Right Side -->
+    <div class="glass-card history-card">
+
+      <h2>📊 Recent Analysis</h2>
+
+      <div id="historyList" class="history-list"></div>
+
+    </div>
+
   </div>
 
   <script src="script.js"></script>
