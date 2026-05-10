@@ -58,6 +58,28 @@ function getEmoji(food) {
 
 }
 
+/*DASHBOARD FUNCTION*/
+function updateDashboard() {
+
+  const eaten =
+    document.getElementById("eatenCalories");
+
+  const fill =
+    document.getElementById("progressFill");
+
+  eaten.textContent =
+    `${totalCalories} kcal`;
+
+  const percent =
+    Math.min(
+      (totalCalories / calorieGoal) * 100,
+      100
+    );
+
+  fill.style.width =
+    `${percent}%`;
+
+}
 /* RENDER HISTORY */
 
 function renderHistory() {
@@ -108,6 +130,7 @@ function renderHistory() {
 }
 
 renderHistory();
+updateDashboard();
 
 /* ANALYZE FOOD */
 
@@ -235,6 +258,14 @@ async function analyzeFood() {
       /* SAVE HISTORY */
 
       history.push(parsed);
+      totalCalories += Number(parsed.calories);
+
+localStorage.setItem(
+  "totalCalories",
+  totalCalories
+);
+
+updateDashboard();
 
       localStorage.setItem(
         "nutritionHistory",
