@@ -3,9 +3,11 @@ import OpenAI from "openai";
 export default async function handler(req, res) {
 
   if (req.method !== "POST") {
+
     return res.status(405).json({
       error: "Method not allowed"
     });
+
   }
 
   try {
@@ -13,16 +15,25 @@ export default async function handler(req, res) {
     const { food } = req.body;
 
     const client = new OpenAI({
+
       apiKey: process.env.GROQ_API_KEY,
+
       baseURL: "https://api.groq.com/openai/v1"
+
     });
 
     const prompt = `
-Return ONLY valid JSON.
+
+Return ONLY raw JSON.
+
+Do not explain.
+Do not add markdown.
+Do not add notes.
 
 Food: ${food}
 
 Format:
+
 {
   "name": "food name",
   "calories": 500,
@@ -30,6 +41,7 @@ Format:
   "carbs": 60,
   "fat": 10
 }
+
 `;
 
     const response =
@@ -45,10 +57,14 @@ Format:
         ],
 
         temperature: 0.2
+
       });
 
     res.status(200).json({
-      result: response.choices[0].message.content
+
+      result:
+        response.choices[0].message.content
+
     });
 
   } catch (error) {
