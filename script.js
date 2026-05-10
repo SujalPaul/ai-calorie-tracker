@@ -5,6 +5,10 @@ const toggle = document.getElementById("themeToggle");
 
 let history =
   JSON.parse(localStorage.getItem("nutritionHistory")) || [];
+let totalCalories =
+  Number(localStorage.getItem("totalCalories")) || 0;
+
+const calorieGoal = 2000;
 
 /* DARK MODE */
 
