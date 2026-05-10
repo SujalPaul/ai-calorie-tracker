@@ -3,27 +3,42 @@ const preview = document.getElementById("preview");
 const loader = document.getElementById("loader");
 const toggle = document.getElementById("themeToggle");
 
-let history = JSON.parse(localStorage.getItem("nutritionHistory")) || [];
+let history =
+  JSON.parse(localStorage.getItem("nutritionHistory")) || [];
 
-/* Theme Toggle */
+/* DARK MODE */
+
 toggle.addEventListener("click", () => {
+
   document.body.classList.toggle("dark");
+
   toggle.textContent =
-    document.body.classList.contains("dark") ? "☀️" : "🌙";
+    document.body.classList.contains("dark")
+      ? "☀️"
+      : "🌙";
+
 });
 
-/* Image Preview */
+/* IMAGE PREVIEW */
+
 fileInput.addEventListener("change", () => {
+
   const file = fileInput.files[0];
 
   if (file) {
+
     preview.src = URL.createObjectURL(file);
+
     preview.classList.remove("hidden");
+
   }
+
 });
 
-/* Food Emoji */
+/* FOOD EMOJIS */
+
 function getEmoji(food) {
+
   food = food.toLowerCase();
 
   if (food.includes("pizza")) return "🍕";
@@ -32,104 +47,188 @@ function getEmoji(food) {
   if (food.includes("biryani")) return "🍛";
   if (food.includes("pasta")) return "🍝";
   if (food.includes("cake")) return "🍰";
+  if (food.includes("salad")) return "🥗";
+  if (food.includes("chicken")) return "🍗";
 
   return "🍽️";
+
 }
 
-/* Render History */
+/* RENDER HISTORY */
+
 function renderHistory() {
 
-  const historyList = document.getElementById("historyList");
+  const historyList =
+    document.getElementById("historyList");
 
- if (history.length === 0) {
+  /* EMPTY STATE */
 
-  historyList.innerHTML = `
-    <div class="empty-history">
-      No analysis yet 🍽️
-    </div>
-  `;
+  if (history.length === 0) {
 
-  return;
-}
-
-historyList.innerHTML = "";
-
-  history.slice().reverse().forEach(item => {
-
-    historyList.innerHTML += `
-      <div class="history-item">
-        <h3>${getEmoji(item.name)} ${item.name}</h3>
-        <p>${item.calories} kcal</p>
+    historyList.innerHTML = `
+      <div class="empty-history">
+        No analysis yet 🍽️
       </div>
     `;
-  });
+
+    return;
+
+  }
+
+  historyList.innerHTML = "";
+
+  history
+    .slice()
+    .reverse()
+    .forEach(item => {
+
+      historyList.innerHTML += `
+
+        <div class="history-item">
+
+          <h3>
+            ${getEmoji(item.name)}
+            ${item.name}
+          </h3>
+
+          <p>
+            ${item.calories} kcal
+          </p>
+
+        </div>
+
+      `;
+
+    });
+
 }
 
 renderHistory();
 
-/* Analyze */
+/* ANALYZE FOOD */
+
 async function analyzeFood() {
 
-  const food = document.getElementById("foodName").value;
+  const food =
+    document.getElementById("foodName").value;
 
   if (!food) {
+
     alert("Please describe the food");
+
     return;
+
   }
 
-  const resultCard = document.getElementById("resultCard");
-  const resultText = document.getElementById("resultText");
+  const resultCard =
+    document.getElementById("resultCard");
+
+  const resultText =
+    document.getElementById("resultText");
+
+  /* SHOW LOADER */
 
   resultCard.classList.add("hidden");
+
   loader.classList.remove("hidden");
 
   try {
 
-    const response = await fetch("/api/analyze-food", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ food })
-    });
+    const response =
+      await fetch("/api/analyze-food", {
 
-    const data = await response.json();
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          food
+        })
+
+      });
+
+    const data =
+      await response.json();
+
+    /* HIDE LOADER */
 
     loader.classList.add("hidden");
+
     resultCard.classList.remove("hidden");
 
     try {
 
-      const parsed = JSON.parse(data.result);
+      /* CLEAN JSON */
+
+      const cleaned =
+        data.result
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
+
+      const parsed =
+        JSON.parse(cleaned);
+
+      /* RESULT UI */
 
       resultText.innerHTML = `
+
         <div class="nutrition-title">
-          <h2>${getEmoji(parsed.name)} ${parsed.name}</h2>
+
+          <h2>
+
+            ${getEmoji(parsed.name)}
+            ${parsed.name}
+
+          </h2>
+
         </div>
 
         <div class="calorie-main">
+
           ${parsed.calories} kcal
+
         </div>
 
         <div class="nutrition-grid">
 
           <div class="nutrition-card">
-            <h3>Protein</h3>
-            <p>${parsed.protein}g</p>
+
+            <h3>💪 Protein</h3>
+
+            <p>
+              ${parsed.protein}g
+            </p>
+
           </div>
 
           <div class="nutrition-card">
-            <h3>Carbs</h3>
-            <p>${parsed.carbs}g</p>
+
+            <h3>⚡ Carbs</h3>
+
+            <p>
+              ${parsed.carbs}g
+            </p>
+
           </div>
 
           <div class="nutrition-card">
-            <h3>Fat</h3>
-            <p>${parsed.fat}g</p>
+
+            <h3>🥑 Fat</h3>
+
+            <p>
+              ${parsed.fat}g
+            </p>
+
           </div>
 
         </div>
+
       `;
+
+      /* SAVE HISTORY */
 
       history.push(parsed);
 
@@ -142,16 +241,20 @@ async function analyzeFood() {
 
     } catch {
 
-      resultText.textContent = data.result;
+      resultText.textContent =
+        data.result;
 
     }
 
   } catch (error) {
 
     loader.classList.add("hidden");
+
     resultCard.classList.remove("hidden");
 
-    resultText.textContent = "Something went wrong";
+    resultText.textContent =
+      "Something went wrong";
 
   }
+
 }
