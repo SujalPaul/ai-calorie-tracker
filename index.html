@@ -4,67 +4,95 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NutriVision AI</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Theme Toggle -->
-  <button id="themeToggle" class="theme-toggle">🌙</button>
+  <!-- Navbar -->
+  <nav class="navbar">
 
+    <div class="nav-logo">
+      🍽️ NutriVision AI
+    </div>
+
+    <button id="themeToggle" class="theme-btn">
+      🌙
+    </button>
+
+  </nav>
+
+  <!-- Main -->
   <div class="app">
 
-    <!-- Left Side -->
+    <!-- Left -->
     <div class="glass-card main-card">
 
-      <div class="logo">
-        <div class="logo-circle">🍽️</div>
-        <div>
-          <h1>NutriVision AI</h1>
-          <p>Smart calorie estimation powered by AI</p>
-        </div>
-      </div>
+      <div class="hero">
 
-      <div class="upload-section">
+        <h1>Smart Nutrition Analysis</h1>
 
-        <label class="upload-box">
-          <input type="file" id="foodImage" accept="image/*">
-          <span>📸 Upload Food Image</span>
-        </label>
-
-        <img id="preview" class="preview hidden">
-
-        <input
-          type="text"
-          id="foodName"
-          placeholder="Describe your food..."
-        >
-
-        <button id="analyzeBtn" onclick="analyzeFood()">
-          Analyze Nutrition
-        </button>
+        <p>
+          Upload food images and estimate calories instantly with AI
+        </p>
 
       </div>
 
+      <!-- Upload -->
+      <label class="upload-box">
+
+        <input type="file" id="foodImage" accept="image/*">
+
+        <span>📸 Upload Food Image</span>
+
+      </label>
+
+      <img id="preview" class="preview hidden">
+
+      <!-- Input -->
+      <input
+        type="text"
+        id="foodName"
+        placeholder="Describe your food..."
+      >
+
+      <!-- Button -->
+      <button id="analyzeBtn" onclick="analyzeFood()">
+        Analyze Nutrition
+      </button>
+
+      <!-- Loader -->
       <div id="loader" class="loader hidden"></div>
 
       <!-- Result -->
       <div id="resultCard" class="result hidden">
+
         <div id="resultText"></div>
+
       </div>
 
     </div>
 
-    <!-- Right Side -->
+    <!-- Right -->
     <div class="glass-card history-card">
 
-      <h2>📊 Recent Analysis</h2>
+      <div class="history-header">
+        📊 Recent Analysis
+      </div>
 
-      <div id="historyList" class="history-list"></div>
+      <div id="historyList" class="history-list">
+
+        <div class="empty-history">
+          No analysis yet 🍽️
+        </div>
+
+      </div>
 
     </div>
 
   </div>
 
   <script src="script.js"></script>
+
 </body>
 </html>
