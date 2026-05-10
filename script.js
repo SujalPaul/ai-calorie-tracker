@@ -41,7 +41,18 @@ function renderHistory() {
 
   const historyList = document.getElementById("historyList");
 
-  historyList.innerHTML = "";
+ if (history.length === 0) {
+
+  historyList.innerHTML = `
+    <div class="empty-history">
+      No analysis yet 🍽️
+    </div>
+  `;
+
+  return;
+}
+
+historyList.innerHTML = "";
 
   history.slice().reverse().forEach(item => {
 
