@@ -5,6 +5,7 @@ const toggle = document.getElementById("themeToggle");
 
 let history =
   JSON.parse(localStorage.getItem("nutritionHistory")) || [];
+
 let totalCalories =
   Number(localStorage.getItem("totalCalories")) || 0;
 
@@ -58,7 +59,8 @@ function getEmoji(food) {
 
 }
 
-/*DASHBOARD FUNCTION*/
+/* DASHBOARD */
+
 function updateDashboard() {
 
   const eaten =
@@ -80,14 +82,13 @@ function updateDashboard() {
     `${percent}%`;
 
 }
-/* RENDER HISTORY */
+
+/* HISTORY */
 
 function renderHistory() {
 
   const historyList =
     document.getElementById("historyList");
-
-  /* EMPTY STATE */
 
   if (history.length === 0) {
 
@@ -187,16 +188,22 @@ async function analyzeFood() {
 
     try {
 
-      /* CLEAN JSON */
+      /* EXTRACT JSON */
 
-      const cleaned =
-        data.result
-          .replace(/```json/g, "")
-          .replace(/```/g, "")
-          .trim();
+      const match =
+        data.result.match(/\{[\s\S]*\}/);
+
+      if (!match) {
+
+        resultText.textContent =
+          "Could not analyze food.";
+
+        return;
+
+      }
 
       const parsed =
-        JSON.parse(cleaned);
+        JSON.parse(match[0]);
 
       /* RESULT UI */
 
@@ -258,21 +265,27 @@ async function analyzeFood() {
       /* SAVE HISTORY */
 
       history.push(parsed);
-      totalCalories += Number(parsed.calories);
-
-localStorage.setItem(
-  "totalCalories",
-  totalCalories
-);
-
-updateDashboard();
 
       localStorage.setItem(
         "nutritionHistory",
         JSON.stringify(history)
       );
 
+      /* UPDATE CALORIES */
+
+      totalCalories +=
+        Number(parsed.calories);
+
+      localStorage.setItem(
+        "totalCalories",
+        totalCalories
+      );
+
+      /* REFRESH UI */
+
       renderHistory();
+
+      updateDashboard();
 
     } catch {
 
