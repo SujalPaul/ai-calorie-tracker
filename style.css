@@ -349,3 +349,143 @@ input::placeholder {
   }
 
 }
+
+
+/* GLOW BACKGROUND */
+
+.bg-glow {
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -1;
+}
+
+.glow1 {
+  background: #6d5dfc;
+  top: -100px;
+  left: -100px;
+}
+
+.glow2 {
+  background: #9333ea;
+  bottom: -100px;
+  right: -100px;
+}
+
+/* RESULT CARD */
+
+.result {
+  margin-top: 25px;
+  animation: fadeUp 0.5s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* TITLE */
+
+.nutrition-title h2 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+/* MAIN CALORIES */
+
+.calorie-main {
+
+  text-align: center;
+
+  font-size: 48px;
+
+  font-weight: bold;
+
+  margin-bottom: 25px;
+
+  background: linear-gradient(135deg,#a78bfa,#818cf8);
+
+  -webkit-background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+/* GRID */
+
+.nutrition-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 15px;
+}
+
+/* NUTRITION CARDS */
+
+.nutrition-card {
+
+  background: rgba(255,255,255,0.08);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  text-align: center;
+
+  transition: 0.3s;
+}
+
+.nutrition-card:hover {
+
+  transform: translateY(-4px);
+
+  background: rgba(255,255,255,0.12);
+}
+
+.nutrition-card h3 {
+  margin: 0 0 8px;
+}
+
+.nutrition-card p {
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* HISTORY */
+
+.history-item {
+
+  background: rgba(255,255,255,0.08);
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  margin-bottom: 14px;
+
+  transition: 0.3s;
+}
+
+.history-item:hover {
+  transform: translateY(-3px);
+}
+
+.history-item h3 {
+  margin: 0 0 8px;
+}
+
+.history-item p {
+  margin: 0;
+  opacity: 0.75;
+}
