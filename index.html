@@ -28,6 +28,89 @@
   <div class="app">
     <div class="glass-card dashboard-card">
 
+  <div class="dashboard-left">
+
+    <div class="ring-wrapper">
+
+      <svg class="progress-ring" width="180" height="180">
+
+        <circle
+          class="ring-bg"
+          cx="90"
+          cy="90"
+          r="70"
+        ></circle>
+
+        <circle
+          class="ring-progress"
+          id="ringProgress"
+          cx="90"
+          cy="90"
+          r="70"
+        ></circle>
+
+      </svg>
+
+      <div class="ring-center">
+
+        <h2 id="ringCalories">0</h2>
+
+        <span>kcal</span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="dashboard-right">
+
+    <h2>🔥 Daily Dashboard</h2>
+
+    <div class="stats-grid">
+
+      <div class="stat-card">
+
+        <h3>🎯 Goal</h3>
+
+        <p>2000 kcal</p>
+
+      </div>
+
+      <div class="stat-card">
+
+        <h3>🍽️ Meals</h3>
+
+        <p id="mealCount">0</p>
+
+      </div>
+
+      <div class="stat-card">
+
+        <h3>⚡ Remaining</h3>
+
+        <p id="remainingCalories">
+          2000 kcal
+        </p>
+
+      </div>
+
+      <div class="stat-card">
+
+        <h3>🔥 Progress</h3>
+
+        <p id="progressPercent">
+          0%
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
   <h2>🔥 Daily Dashboard</h2>
 
   <div class="goal-section">
