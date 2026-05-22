@@ -1,28 +1,24 @@
-const fileInput = document.getElementById("foodImage");
 const preview = document.getElementById("preview");
-const loader = document.getElementById("loader");
-const toggle = document.getElementById("themeToggle");
 
-let history =
-  JSON.parse(localStorage.getItem("nutritionHistory")) || [];
+const fileInput = document.getElementById("foodImage");
 
-let totalCalories =
-  Number(localStorage.getItem("totalCalories")) || 0;
+const historyList = document.getElementById("historyList");
 
-const calorieGoal = 2000;
+const ringProgress = document.getElementById("ringProgress");
 
-/* DARK MODE */
+const ringCalories = document.getElementById("ringCalories");
 
-toggle.addEventListener("click", () => {
+const mealCount = document.getElementById("mealCount");
 
-  document.body.classList.toggle("dark");
+const remainingCalories =
+  document.getElementById("remainingCalories");
 
-  toggle.textContent =
-    document.body.classList.contains("dark")
-      ? "☀️"
-      : "🌙";
+const progressPercent =
+  document.getElementById("progressPercent");
 
-});
+let totalCalories = 0;
+
+let meals = [];
 
 /* IMAGE PREVIEW */
 
@@ -30,170 +26,61 @@ fileInput.addEventListener("change", () => {
 
   const file = fileInput.files[0];
 
-  if (file) {
+  if (!file) return;
 
-    preview.src = URL.createObjectURL(file);
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+
+    preview.src = e.target.result;
 
     preview.classList.remove("hidden");
+
+  };
+
+  reader.readAsDataURL(file);
+
+});
+
+/* THEME */
+
+const themeToggle =
+  document.getElementById("themeToggle");
+
+themeToggle.addEventListener("click", () => {
+
+  document.body.classList.toggle("dark");
+
+  if (document.body.classList.contains("dark")) {
+
+    themeToggle.textContent = "☀️";
+
+  } else {
+
+    themeToggle.textContent = "🌙";
 
   }
 
 });
 
-/* FOOD EMOJIS */
-
-function getEmoji(food) {
-
-  food = food.toLowerCase();
-
-  if (food.includes("pizza")) return "🍕";
-  if (food.includes("burger")) return "🍔";
-  if (food.includes("rice")) return "🍚";
-  if (food.includes("biryani")) return "🍛";
-  if (food.includes("pasta")) return "🍝";
-  if (food.includes("cake")) return "🍰";
-  if (food.includes("salad")) return "🥗";
-  if (food.includes("chicken")) return "🍗";
-
-  return "🍽️";
-
-}
-
-/* DASHBOARD */
-
-function updateDashboard() {
-
-  const ring =
-    document.getElementById("ringProgress");
-
-  const ringCalories =
-    document.getElementById("ringCalories");
-
-  const mealCount =
-    document.getElementById("mealCount");
-
-  const remaining =
-    document.getElementById("remainingCalories");
-
-  const progressText =
-    document.getElementById("progressPercent");
-
-  const radius = 70;
-
-  const circumference =
-    2 * Math.PI * radius;
-
-  const percent =
-    Math.min(
-      (totalCalories / calorieGoal) * 100,
-      100
-    );
-
-  const offset =
-    circumference -
-    (percent / 100) * circumference;
-
-  ring.style.strokeDashoffset =
-    offset;
-
-  ringCalories.textContent =
-    totalCalories;
-
-  mealCount.textContent =
-    history.length;
-
-  remaining.textContent =
-    `${Math.max(calorieGoal - totalCalories, 0)} kcal`;
-
-  progressText.textContent =
-    `${Math.round(percent)}%`;
-
-}
-
-  const eaten =
-    document.getElementById("eatenCalories");
-
-  const fill =
-    document.getElementById("progressFill");
-
-  eaten.textContent =
-    `${totalCalories} kcal`;
-
-  const percent =
-    Math.min(
-      (totalCalories / calorieGoal) * 100,
-      100
-    );
-
-  fill.style.width =
-    `${percent}%`;
-
-}
-
-/* HISTORY */
-
-function renderHistory() {
-
-  const historyList =
-    document.getElementById("historyList");
-
-  if (history.length === 0) {
-
-    historyList.innerHTML = `
-      <div class="empty-history">
-        No analysis yet 🍽️
-      </div>
-    `;
-
-    return;
-
-  }
-
-  historyList.innerHTML = "";
-
-  history
-    .slice()
-    .reverse()
-    .forEach(item => {
-
-      historyList.innerHTML += `
-
-        <div class="history-item">
-
-          <h3>
-            ${getEmoji(item.name)}
-            ${item.name}
-          </h3>
-
-          <p>
-            ${item.calories} kcal
-          </p>
-
-        </div>
-
-      `;
-
-    });
-
-}
-
-renderHistory();
-updateDashboard();
-
-/* ANALYZE FOOD */
+/* ANALYZE */
 
 async function analyzeFood() {
 
-  const food =
+  const foodName =
     document.getElementById("foodName").value;
 
-  if (!food) {
+  const file = fileInput.files[0];
 
-    alert("Please describe the food");
+  if (!foodName || !file) {
+
+    alert("Upload image and enter food name");
 
     return;
-
   }
+
+  const loader =
+    document.getElementById("loader");
 
   const resultCard =
     document.getElementById("resultCard");
@@ -201,56 +88,61 @@ async function analyzeFood() {
   const resultText =
     document.getElementById("resultText");
 
-  /* SHOW LOADER */
+  loader.classList.remove("hidden");
 
   resultCard.classList.add("hidden");
 
-  loader.classList.remove("hidden");
+  const reader = new FileReader();
 
-  try {
-
-    const response =
-      await fetch("/api/analyze-food", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-          food
-        })
-
-      });
-
-    const data =
-      await response.json();
-
-    /* HIDE LOADER */
-
-    loader.classList.add("hidden");
-
-    resultCard.classList.remove("hidden");
+  reader.onloadend = async () => {
 
     try {
 
-      /* EXTRACT JSON */
+      const base64 = reader.result;
 
-      const match =
-        data.result.match(/\{[\s\S]*\}/);
+      const response = await fetch(
+        "/api/analyze-food",
+        {
+          method: "POST",
 
-      if (!match) {
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
 
-        resultText.textContent =
-          "Could not analyze food.";
+          body: JSON.stringify({
+            image: base64,
+            foodName
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      loader.classList.add("hidden");
+
+      if (data.error) {
+
+        resultText.innerHTML = `
+          <p>${data.error}</p>
+        `;
+
+        resultCard.classList.remove("hidden");
 
         return;
-
       }
 
-      const parsed =
-        JSON.parse(match[0]);
+      const calories =
+        parseInt(data.calories) || 0;
+
+      const protein =
+        parseFloat(data.protein) || 0;
+
+      const carbs =
+        parseFloat(data.carbs) || 0;
+
+      const fat =
+        parseFloat(data.fat) || 0;
 
       /* RESULT UI */
 
@@ -258,18 +150,13 @@ async function analyzeFood() {
 
         <div class="nutrition-title">
 
-          <h2>
-
-            ${getEmoji(parsed.name)}
-            ${parsed.name}
-
-          </h2>
+          <h2>🍜 ${foodName}</h2>
 
         </div>
 
         <div class="calorie-main">
 
-          ${parsed.calories} kcal
+          ${calories} kcal
 
         </div>
 
@@ -279,9 +166,7 @@ async function analyzeFood() {
 
             <h3>💪 Protein</h3>
 
-            <p>
-              ${parsed.protein}g
-            </p>
+            <p>${protein}g</p>
 
           </div>
 
@@ -289,9 +174,7 @@ async function analyzeFood() {
 
             <h3>⚡ Carbs</h3>
 
-            <p>
-              ${parsed.carbs}g
-            </p>
+            <p>${carbs}g</p>
 
           </div>
 
@@ -299,9 +182,7 @@ async function analyzeFood() {
 
             <h3>🥑 Fat</h3>
 
-            <p>
-              ${parsed.fat}g
-            </p>
+            <p>${fat}g</p>
 
           </div>
 
@@ -309,47 +190,104 @@ async function analyzeFood() {
 
       `;
 
-      /* SAVE HISTORY */
+      resultCard.classList.remove("hidden");
 
-      history.push(parsed);
+      /* DASHBOARD */
 
-      localStorage.setItem(
-        "nutritionHistory",
-        JSON.stringify(history)
-      );
+      totalCalories += calories;
 
-      /* UPDATE CALORIES */
-
-      totalCalories +=
-        Number(parsed.calories);
-
-      localStorage.setItem(
-        "totalCalories",
-        totalCalories
-      );
-
-      /* REFRESH UI */
-
-      renderHistory();
+      meals.push({
+        name: foodName,
+        calories
+      });
 
       updateDashboard();
 
-    } catch {
+      updateHistory();
 
-      resultText.textContent =
-        data.result;
+    } catch (err) {
+
+      loader.classList.add("hidden");
+
+      resultText.innerHTML = `
+        <p>Something went wrong.</p>
+      `;
+
+      resultCard.classList.remove("hidden");
+
+      console.log(err);
 
     }
 
-  } catch (error) {
+  };
 
-    loader.classList.add("hidden");
+  reader.readAsDataURL(file);
 
-    resultCard.classList.remove("hidden");
+}
 
-    resultText.textContent =
-      "Something went wrong";
+/* DASHBOARD */
 
-  }
+function updateDashboard() {
+
+  ringCalories.textContent =
+    totalCalories;
+
+  mealCount.textContent =
+    meals.length;
+
+  const remaining =
+    2000 - totalCalories;
+
+  remainingCalories.textContent =
+    `${remaining} kcal`;
+
+  const percent =
+    Math.min(
+      (totalCalories / 2000) * 100,
+      100
+    );
+
+  progressPercent.textContent =
+    `${Math.round(percent)}%`;
+
+  const circumference = 440;
+
+  const offset =
+    circumference -
+    (percent / 100) * circumference;
+
+  ringProgress.style.strokeDashoffset =
+    offset;
+
+}
+
+/* HISTORY */
+
+function updateHistory() {
+
+  historyList.innerHTML = "";
+
+  meals
+    .slice()
+    .reverse()
+    .forEach(meal => {
+
+      historyList.innerHTML += `
+
+        <div class="history-item">
+
+          <h3>
+            🍜 ${meal.name}
+          </h3>
+
+          <p>
+            ${meal.calories} kcal
+          </p>
+
+        </div>
+
+      `;
+
+    });
 
 }
