@@ -5,50 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NutriVision AI</title>
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-  <div class="bg-blur blur1"></div>
-  <div class="bg-blur blur2"></div>
+  <div class="background-blur blur1"></div>
+  <div class="background-blur blur2"></div>
 
   <header>
-    <h1>🍽 NutriVision AI</h1>
-
-    <button class="theme-btn">
-      🌙
-    </button>
+    <h1>🍽️ NutriVision AI</h1>
   </header>
 
-  <main class="container">
+  <main class="dashboard-layout">
+
+    <!-- DASHBOARD -->
 
     <section class="dashboard-card">
+
       <h2>🔥 Daily Dashboard</h2>
 
       <div class="dashboard-grid">
 
-        <div class="dashboard-stat">
-          <h3>Total Calories</h3>
-          <p>
-            <span id="totalCalories">0</span> kcal
-          </p>
+        <div class="dashboard-circle">
+          <div class="circle-inner">
+            <h1 id="totalCalories">0</h1>
+            <p>kcal</p>
+          </div>
         </div>
 
-        <div class="dashboard-stat">
-          <h3>Meals</h3>
-          <p id="mealCount">0</p>
-        </div>
+        <div class="dashboard-stats">
 
-        <div class="dashboard-stat">
-          <h3>Remaining</h3>
-          <p>
-            <span id="remainingCalories">2000</span> kcal
-          </p>
-        </div>
+          <div class="stat-card">
+            <span>🎯 Goal</span>
+            <h3>2000 kcal</h3>
+          </div>
 
-        <div class="dashboard-stat">
-          <h3>Progress</h3>
-          <p id="progressPercent">0%</p>
+          <div class="stat-card">
+            <span>🍽 Meals</span>
+            <h3 id="mealCount">0</h3>
+          </div>
+
+          <div class="stat-card">
+            <span>⚡ Remaining</span>
+            <h3 id="remainingCalories">2000</h3>
+          </div>
+
+          <div class="stat-card">
+            <span>🔥 Progress</span>
+            <h3 id="progressPercent">0%</h3>
+          </div>
+
         </div>
 
       </div>
@@ -56,48 +65,62 @@
       <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>
       </div>
+
     </section>
+
+    <!-- CHARTS -->
+
+    <section class="charts-section">
+
+      <div class="chart-card">
+        <h2>📈 Calories Overview</h2>
+        <canvas id="calorieChart"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h2>🥗 Macro Split</h2>
+        <canvas id="macroChart"></canvas>
+      </div>
+
+    </section>
+
+    <!-- MAIN GRID -->
 
     <section class="main-grid">
 
-      <div class="analyzer-card">
+      <!-- ANALYZER -->
 
-        <h2>Smart Nutrition Analysis</h2>
+      <div class="glass-card">
+
+        <h1>Smart Nutrition Analysis</h1>
 
         <p class="subtitle">
-          Upload food images and estimate calories instantly
+          Upload food images and estimate calories instantly with AI
         </p>
 
-        <div class="upload-box">
+        <label for="imageInput" class="upload-box">
+          📸 Upload Food Image
+        </label>
 
-          <input
-            type="file"
-            id="imageInput"
-            accept="image/*"
-            hidden
-          />
+        <input type="file" id="imageInput" accept="image/*"/>
 
-          <label for="imageInput" class="upload-label">
-            📸 Upload Food Image
-          </label>
+        <img id="imagePreview"/>
 
-          <img id="imagePreview" />
+        <input
+          type="text"
+          id="foodInput"
+          placeholder="Describe your food..."
+        />
 
-          <input
-            type="text"
-            id="foodInput"
-            placeholder="Describe your food..."
-          />
-
-          <button id="analyzeBtn">
-            Analyze Nutrition
-          </button>
-
-        </div>
+        <button id="analyzeBtn">
+          Analyze Nutrition
+        </button>
 
         <div id="result"></div>
 
       </div>
+
+      <!-- HISTORY -->
 
       <div class="history-card">
 
