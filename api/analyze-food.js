@@ -1,9 +1,11 @@
 export default async function handler(req, res) {
 
   if (req.method !== "POST") {
+
     return res.status(405).json({
       error: "Method not allowed"
     });
+
   }
 
   try {
@@ -27,11 +29,14 @@ export default async function handler(req, res) {
           model: "llama3-70b-8192",
 
           messages: [
+
             {
               role: "system",
 
               content:
-                `
+`
+You are a nutrition API.
+
 Return ONLY valid JSON.
 
 Example:
@@ -42,6 +47,10 @@ Example:
   "carbs": 35,
   "fat": 14
 }
+
+Do not add explanations.
+Do not use markdown.
+Do not wrap in backticks.
 `
             },
 
@@ -49,12 +58,15 @@ Example:
               role: "user",
 
               content:
-                `Give nutrition for ${foodName}`
+                `Give nutrition facts for ${foodName}`
             }
+
           ],
 
-          temperature: 0.2
+          temperature: 0.1
+
         })
+
       }
     );
 
@@ -63,7 +75,15 @@ Example:
     const text =
       data.choices[0].message.content;
 
-    const nutrition = JSON.parse(text);
+    console.log(text);
+
+    const cleanText = text
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const nutrition =
+      JSON.parse(cleanText);
 
     res.status(200).json(nutrition);
 
