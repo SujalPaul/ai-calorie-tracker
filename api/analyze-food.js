@@ -34,36 +34,31 @@ export default async function handler(req, res) {
               role: "system",
 
               content:
-`
-You are a nutrition API.
-
-Return ONLY valid JSON.
-
-Example:
-{
-  "name": "Pizza",
-  "calories": 320,
-  "protein": 12,
-  "carbs": 35,
-  "fat": 14
-}
-
-Do not add explanations.
-Do not use markdown.
-Do not wrap in backticks.
-`
+                "You are a nutrition assistant. Return ONLY valid JSON."
             },
 
             {
               role: "user",
 
               content:
-                `Give nutrition facts for ${foodName}`
+`
+Give nutrition facts for ${foodName}
+
+Format EXACTLY like this:
+
+{
+  "name": "Food Name",
+  "calories": 500,
+  "protein": 20,
+  "carbs": 50,
+  "fat": 10
+}
+`
             }
 
           ],
 
-          temperature: 0.1
+          temperature: 0.2
 
         })
 
@@ -72,18 +67,37 @@ Do not wrap in backticks.
 
     const data = await response.json();
 
-    const text =
-      data.choices[0].message.content;
+    console.log(data);
 
-    console.log(text);
+    const content =
+      data.choices?.[0]?.message?.content;
 
-    const cleanText = text
+    if (!content) {
+
+      return res.status(500).json({
+        error: "No response from AI"
+      });
+
+    }
+
+    const cleaned = content
       .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
-    const nutrition =
-      JSON.parse(cleanText);
+    let nutrition;
+
+    try {
+
+      nutrition = JSON.parse(cleaned);
+
+    } catch {
+
+      return res.status(500).json({
+        error: "Invalid AI response"
+      });
+
+    }
 
     res.status(200).json(nutrition);
 
@@ -92,7 +106,7 @@ Do not wrap in backticks.
     console.log(error);
 
     res.status(500).json({
-      error: "Failed to analyze food"
+      error: error.message
     });
 
   }
