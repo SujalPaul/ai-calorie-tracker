@@ -1,194 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>NutriVision AI</title>
 
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="bg-glow glow1"></div>
-<div class="bg-glow glow2"></div>
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 
-  <!-- Navbar -->
+</head>
+
+<body>
+
+  <!-- GLOW -->
+
+  <div class="bg-glow glow1"></div>
+  <div class="bg-glow glow2"></div>
+
+  <!-- NAVBAR -->
+
   <nav class="navbar">
 
     <div class="nav-logo">
       🍽️ NutriVision AI
     </div>
 
-    <button id="themeToggle" class="theme-btn">
+    <button
+      id="themeToggle"
+      class="theme-btn"
+    >
       🌙
     </button>
 
   </nav>
 
-  <!-- Main -->
+  <!-- APP -->
+
   <div class="app">
+
+    <!-- DASHBOARD -->
+
     <div class="glass-card dashboard-card">
 
-  <div class="dashboard-left">
+      <div class="dashboard-left">
 
-    <div class="ring-wrapper">
+        <div class="ring-wrapper">
 
-      <svg class="progress-ring" width="180" height="180">
+          <svg
+            class="progress-ring"
+            width="180"
+            height="180"
+          >
 
-        <circle
-          class="ring-bg"
-          cx="90"
-          cy="90"
-          r="70"
-        ></circle>
+            <circle
+              class="ring-bg"
+              cx="90"
+              cy="90"
+              r="70"
+            ></circle>
 
-        <circle
-          class="ring-progress"
-          id="ringProgress"
-          cx="90"
-          cy="90"
-          r="70"
-        ></circle>
+            <circle
+              class="ring-progress"
+              id="ringProgress"
+              cx="90"
+              cy="90"
+              r="70"
+            ></circle>
 
-      </svg>
+          </svg>
 
-      <div class="ring-center">
+          <div class="ring-center">
 
-        <h2 id="ringCalories">0</h2>
+            <h2 id="ringCalories">
+              0
+            </h2>
 
-        <span>kcal</span>
+            <span>kcal</span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="dashboard-right">
+
+        <h2>
+          🔥 Daily Dashboard
+        </h2>
+
+        <div class="stats-grid">
+
+          <div class="stat-card">
+
+            <h3>🎯 Goal</h3>
+
+            <p>2000 kcal</p>
+
+          </div>
+
+          <div class="stat-card">
+
+            <h3>🍽️ Meals</h3>
+
+            <p id="mealCount">0</p>
+
+          </div>
+
+          <div class="stat-card">
+
+            <h3>⚡ Remaining</h3>
+
+            <p id="remainingCalories">
+              2000 kcal
+            </p>
+
+          </div>
+
+          <div class="stat-card">
+
+            <h3>🔥 Progress</h3>
+
+            <p id="progressPercent">
+              0%
+            </p>
+
+          </div>
+
+        </div>
 
       </div>
 
     </div>
 
-  </div>
+    <!-- LEFT COLUMN -->
 
-  <div class="dashboard-right">
+    <div class="left-column">
 
-    <h2>🔥 Daily Dashboard</h2>
+      <!-- MAIN -->
 
-    <div class="stats-grid">
+      <div class="glass-card main-card">
 
-      <div class="stat-card">
+        <div class="hero">
 
-        <h3>🎯 Goal</h3>
+          <h1>
+            Smart Nutrition Analysis
+          </h1>
 
-        <p>2000 kcal</p>
+          <p>
+            Upload food images and estimate calories instantly with AI
+          </p>
 
-      </div>
+        </div>
 
-      <div class="stat-card">
+        <!-- UPLOAD -->
 
-        <h3>🍽️ Meals</h3>
+        <label class="upload-box">
 
-        <p id="mealCount">0</p>
+          <input
+            type="file"
+            id="foodImage"
+            accept="image/*"
+          >
 
-      </div>
+          <span>
+            📸 Upload Food Image
+          </span>
 
-      <div class="stat-card">
+        </label>
 
-        <h3>⚡ Remaining</h3>
+        <!-- PREVIEW -->
 
-        <p id="remainingCalories">
-          2000 kcal
-        </p>
+        <img
+          id="preview"
+          class="preview hidden"
+        >
 
-      </div>
+        <!-- FOOD INPUT -->
 
-      <div class="stat-card">
+        <input
+          type="text"
+          id="foodName"
+          placeholder="Describe your food..."
+        >
 
-        <h3>🔥 Progress</h3>
+        <!-- BUTTON -->
 
-        <p id="progressPercent">
-          0%
-        </p>
+        <button
+          id="analyzeBtn"
+          onclick="analyzeFood()"
+        >
+          Analyze Nutrition
+        </button>
 
-      </div>
+        <!-- LOADER -->
 
-    </div>
+        <div
+          id="loader"
+          class="loader hidden"
+        ></div>
 
-  </div>
+        <!-- RESULT -->
 
-</div>
+        <div
+          id="resultCard"
+          class="result hidden"
+        >
 
-  <h2>🔥 Daily Dashboard</h2>
+          <div id="resultText"></div>
 
-  <div class="goal-section">
-
-    <div class="goal-top">
-      <span>Daily Goal</span>
-      <span id="goalValue">2000 kcal</span>
-    </div>
-
-    <div class="progress-bar">
-      <div id="progressFill"></div>
-    </div>
-
-    <div class="goal-top">
-      <span>Eaten</span>
-      <span id="eatenCalories">0 kcal</span>
-    </div>
-
-  </div>
-
-</div>
-
-    <!-- Left -->
-    <div class="glass-card main-card">
-
-      <div class="hero">
-
-        <h1>Smart Nutrition Analysis</h1>
-
-        <p>
-          Upload food images and estimate calories instantly with AI
-        </p>
-
-      </div>
-
-      <!-- Upload -->
-      <label class="upload-box">
-
-        <input type="file" id="foodImage" accept="image/*">
-
-        <span>📸 Upload Food Image</span>
-
-      </label>
-
-      <img id="preview" class="preview hidden">
-
-      <!-- Input -->
-      <input
-        type="text"
-        id="foodName"
-        placeholder="Describe your food..."
-      >
-
-      <!-- Button -->
-      <button id="analyzeBtn" onclick="analyzeFood()">
-        Analyze Nutrition
-      </button>
-
-      <!-- Loader -->
-      <div id="loader" class="loader hidden"></div>
-
-      <!-- Result -->
-      <div id="resultCard" class="result hidden">
-
-        <div id="resultText"></div>
+        </div>
 
       </div>
 
     </div>
 
-    <!-- Right -->
+    <!-- HISTORY -->
+
     <div class="glass-card history-card">
 
       <div class="history-header">
         📊 Recent Analysis
       </div>
 
-      <div id="historyList" class="history-list">
+      <div
+        id="historyList"
+        class="history-list"
+      >
 
         <div class="empty-history">
           No analysis yet 🍽️
@@ -203,4 +250,5 @@
   <script src="script.js"></script>
 
 </body>
+
 </html>
