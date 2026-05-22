@@ -1,13 +1,5 @@
 export default async function handler(req, res) {
 
-  if (req.method !== "POST") {
-
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
-
-  }
-
   try {
 
     const { foodName } = req.body;
@@ -31,34 +23,23 @@ export default async function handler(req, res) {
           messages: [
 
             {
-              role: "system",
-
-              content:
-                "You are a nutrition assistant. Return ONLY valid JSON."
-            },
-
-            {
               role: "user",
 
               content:
 `
-Give nutrition facts for ${foodName}
+Give nutrition facts for ${foodName}.
 
-Format EXACTLY like this:
+Reply ONLY in this format:
 
-{
-  "name": "Food Name",
-  "calories": 500,
-  "protein": 20,
-  "carbs": 50,
-  "fat": 10
-}
+name: food
+calories: number
+protein: number
+carbs: number
+fat: number
 `
             }
 
-          ],
-
-          temperature: 0.2
+          ]
 
         })
 
@@ -70,7 +51,7 @@ Format EXACTLY like this:
     console.log(data);
 
     const content =
-      data.choices?.[0]?.message?.content;
+      data?.choices?.[0]?.message?.content;
 
     if (!content) {
 
@@ -80,33 +61,38 @@ Format EXACTLY like this:
 
     }
 
-    const cleaned = content
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
+    const calories =
+      content.match(/calories:\s*(\d+)/i)?.[1] || 0;
 
-    let nutrition;
+    const protein =
+      content.match(/protein:\s*(\d+)/i)?.[1] || 0;
 
-    try {
+    const carbs =
+      content.match(/carbs:\s*(\d+)/i)?.[1] || 0;
 
-      nutrition = JSON.parse(cleaned);
+    const fat =
+      content.match(/fat:\s*(\d+)/i)?.[1] || 0;
 
-    } catch {
+    res.status(200).json({
 
-      return res.status(500).json({
-        error: "Invalid AI response"
-      });
+      name: foodName,
 
-    }
+      calories,
 
-    res.status(200).json(nutrition);
+      protein,
+
+      carbs,
+
+      fat
+
+    });
 
   } catch (error) {
 
     console.log(error);
 
     res.status(500).json({
-      error: error.message
+      error: "Failed to analyze food"
     });
 
   }
