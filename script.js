@@ -63,6 +63,53 @@ function getEmoji(food) {
 
 function updateDashboard() {
 
+  const ring =
+    document.getElementById("ringProgress");
+
+  const ringCalories =
+    document.getElementById("ringCalories");
+
+  const mealCount =
+    document.getElementById("mealCount");
+
+  const remaining =
+    document.getElementById("remainingCalories");
+
+  const progressText =
+    document.getElementById("progressPercent");
+
+  const radius = 70;
+
+  const circumference =
+    2 * Math.PI * radius;
+
+  const percent =
+    Math.min(
+      (totalCalories / calorieGoal) * 100,
+      100
+    );
+
+  const offset =
+    circumference -
+    (percent / 100) * circumference;
+
+  ring.style.strokeDashoffset =
+    offset;
+
+  ringCalories.textContent =
+    totalCalories;
+
+  mealCount.textContent =
+    history.length;
+
+  remaining.textContent =
+    `${Math.max(calorieGoal - totalCalories, 0)} kcal`;
+
+  progressText.textContent =
+    `${Math.round(percent)}%`;
+
+}
+
   const eaten =
     document.getElementById("eatenCalories");
 
