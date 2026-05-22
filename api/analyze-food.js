@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 
         body: JSON.stringify({
 
-          model: "llama3-70b-8192",
+          model: "gemma2-9b-it",
 
           messages: [
 
