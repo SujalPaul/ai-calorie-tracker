@@ -1,254 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NutriVision AI</title>
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-  <!-- GLOW -->
+  <div class="bg-blur blur1"></div>
+  <div class="bg-blur blur2"></div>
 
-  <div class="bg-glow glow1"></div>
-  <div class="bg-glow glow2"></div>
+  <header>
+    <h1>🍽 NutriVision AI</h1>
 
-  <!-- NAVBAR -->
-
-  <nav class="navbar">
-
-    <div class="nav-logo">
-      🍽️ NutriVision AI
-    </div>
-
-    <button
-      id="themeToggle"
-      class="theme-btn"
-    >
+    <button class="theme-btn">
       🌙
     </button>
+  </header>
 
-  </nav>
+  <main class="container">
 
-  <!-- APP -->
+    <section class="dashboard-card">
+      <h2>🔥 Daily Dashboard</h2>
 
-  <div class="app">
+      <div class="dashboard-grid">
 
-    <!-- DASHBOARD -->
-
-    <div class="glass-card dashboard-card">
-
-      <div class="dashboard-left">
-
-        <div class="ring-wrapper">
-
-          <svg
-            class="progress-ring"
-            width="180"
-            height="180"
-          >
-
-            <circle
-              class="ring-bg"
-              cx="90"
-              cy="90"
-              r="70"
-            ></circle>
-
-            <circle
-              class="ring-progress"
-              id="ringProgress"
-              cx="90"
-              cy="90"
-              r="70"
-            ></circle>
-
-          </svg>
-
-          <div class="ring-center">
-
-            <h2 id="ringCalories">
-              0
-            </h2>
-
-            <span>kcal</span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="dashboard-right">
-
-        <h2>
-          🔥 Daily Dashboard
-        </h2>
-
-        <div class="stats-grid">
-
-          <div class="stat-card">
-
-            <h3>🎯 Goal</h3>
-
-            <p>2000 kcal</p>
-
-          </div>
-
-          <div class="stat-card">
-
-            <h3>🍽️ Meals</h3>
-
-            <p id="mealCount">0</p>
-
-          </div>
-
-          <div class="stat-card">
-
-            <h3>⚡ Remaining</h3>
-
-            <p id="remainingCalories">
-              2000 kcal
-            </p>
-
-          </div>
-
-          <div class="stat-card">
-
-            <h3>🔥 Progress</h3>
-
-            <p id="progressPercent">
-              0%
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- LEFT COLUMN -->
-
-    <div class="left-column">
-
-      <!-- MAIN -->
-
-      <div class="glass-card main-card">
-
-        <div class="hero">
-
-          <h1>
-            Smart Nutrition Analysis
-          </h1>
-
+        <div class="dashboard-stat">
+          <h3>Total Calories</h3>
           <p>
-            Upload food images and estimate calories instantly with AI
+            <span id="totalCalories">0</span> kcal
           </p>
-
         </div>
 
-        <!-- UPLOAD -->
+        <div class="dashboard-stat">
+          <h3>Meals</h3>
+          <p id="mealCount">0</p>
+        </div>
 
-        <label class="upload-box">
+        <div class="dashboard-stat">
+          <h3>Remaining</h3>
+          <p>
+            <span id="remainingCalories">2000</span> kcal
+          </p>
+        </div>
+
+        <div class="dashboard-stat">
+          <h3>Progress</h3>
+          <p id="progressPercent">0%</p>
+        </div>
+
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </section>
+
+    <section class="main-grid">
+
+      <div class="analyzer-card">
+
+        <h2>Smart Nutrition Analysis</h2>
+
+        <p class="subtitle">
+          Upload food images and estimate calories instantly
+        </p>
+
+        <div class="upload-box">
 
           <input
             type="file"
-            id="foodImage"
+            id="imageInput"
             accept="image/*"
-          >
+            hidden
+          />
 
-          <span>
+          <label for="imageInput" class="upload-label">
             📸 Upload Food Image
-          </span>
+          </label>
 
-        </label>
+          <img id="imagePreview" />
 
-        <!-- PREVIEW -->
+          <input
+            type="text"
+            id="foodInput"
+            placeholder="Describe your food..."
+          />
 
-        <img
-          id="preview"
-          class="preview hidden"
-        >
-
-        <!-- FOOD INPUT -->
-
-        <input
-          type="text"
-          id="foodName"
-          placeholder="Describe your food..."
-        >
-
-        <!-- BUTTON -->
-
-        <button
-          id="analyzeBtn"
-          onclick="analyzeFood()"
-        >
-          Analyze Nutrition
-        </button>
-
-        <!-- LOADER -->
-
-        <div
-          id="loader"
-          class="loader hidden"
-        ></div>
-
-        <!-- RESULT -->
-
-        <div
-          id="resultCard"
-          class="result hidden"
-        >
-
-          <div id="resultText"></div>
+          <button id="analyzeBtn">
+            Analyze Nutrition
+          </button>
 
         </div>
 
-      </div>
-
-    </div>
-
-    <!-- HISTORY -->
-
-    <div class="glass-card history-card">
-
-      <div class="history-header">
-        📊 Recent Analysis
-      </div>
-
-      <div
-        id="historyList"
-        class="history-list"
-      >
-
-        <div class="empty-history">
-          No analysis yet 🍽️
-        </div>
+        <div id="result"></div>
 
       </div>
 
-    </div>
+      <div class="history-card">
 
-  </div>
+        <h2>📊 Recent Analysis</h2>
+
+        <div id="historyList"></div>
+
+      </div>
+
+    </section>
+
+  </main>
 
   <script src="script.js"></script>
 
 </body>
-
 </html>
