@@ -1,293 +1,139 @@
-const preview = document.getElementById("preview");
-
-const fileInput = document.getElementById("foodImage");
-
+const foodInput = document.getElementById("foodInput");
+const imageInput = document.getElementById("imageInput");
+const imagePreview = document.getElementById("imagePreview");
+const analyzeBtn = document.getElementById("analyzeBtn");
+const result = document.getElementById("result");
 const historyList = document.getElementById("historyList");
 
-const ringProgress = document.getElementById("ringProgress");
-
-const ringCalories = document.getElementById("ringCalories");
-
-const mealCount = document.getElementById("mealCount");
-
-const remainingCalories =
-  document.getElementById("remainingCalories");
-
-const progressPercent =
-  document.getElementById("progressPercent");
-
 let totalCalories = 0;
+let meals = 0;
 
-let meals = [];
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files[0];
 
-/* IMAGE PREVIEW */
-
-fileInput.addEventListener("change", () => {
-
-  const file = fileInput.files[0];
-
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = function (e) {
-
-    preview.src = e.target.result;
-
-    preview.classList.remove("hidden");
-
-  };
-
-  reader.readAsDataURL(file);
-
-});
-
-/* THEME */
-
-const themeToggle =
-  document.getElementById("themeToggle");
-
-themeToggle.addEventListener("click", () => {
-
-  document.body.classList.toggle("dark");
-
-  if (document.body.classList.contains("dark")) {
-
-    themeToggle.textContent = "☀️";
-
-  } else {
-
-    themeToggle.textContent = "🌙";
-
+  if (file) {
+    imagePreview.src = URL.createObjectURL(file);
+    imagePreview.style.display = "block";
   }
-
 });
 
-/* ANALYZE */
+analyzeBtn.addEventListener("click", async () => {
+  const food = foodInput.value.trim();
 
-async function analyzeFood() {
-
-  const foodName =
-    document.getElementById("foodName").value;
-
-  const file = fileInput.files[0];
-
-  if (!foodName || !file) {
-
-    alert("Upload image and enter food name");
-
+  if (!food) {
+    result.innerHTML = `
+      <div class="error-card">
+        Please enter food name
+      </div>
+    `;
     return;
   }
 
-  const loader =
-    document.getElementById("loader");
+  analyzeBtn.innerHTML = "Analyzing...";
+  analyzeBtn.disabled = true;
 
-  const resultCard =
-    document.getElementById("resultCard");
+  result.innerHTML = `
+    <div class="loading-card">
+      <div class="loader"></div>
+      <p>Analyzing nutrition...</p>
+    </div>
+  `;
 
-  const resultText =
-    document.getElementById("resultText");
+  try {
+    const response = await fetch("/api/analyze-food", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ food }),
+    });
 
-  loader.classList.remove("hidden");
+    const data = await response.json();
 
-  resultCard.classList.add("hidden");
-
-  const reader = new FileReader();
-
-  reader.onloadend = async () => {
-
-    try {
-
-      const base64 = reader.result;
-
-      const response = await fetch(
-        "/api/analyze-food",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-            image: base64,
-            foodName
-          })
-        }
-      );
-
-      const data = await response.json();
-
-      loader.classList.add("hidden");
-
-      if (data.error) {
-
-        resultText.innerHTML = `
-          <p>${data.error}</p>
-        `;
-
-        resultCard.classList.remove("hidden");
-
-        return;
-      }
-
-      const calories =
-        parseInt(data.calories) || 0;
-
-      const protein =
-        parseFloat(data.protein) || 0;
-
-      const carbs =
-        parseFloat(data.carbs) || 0;
-
-      const fat =
-        parseFloat(data.fat) || 0;
-
-      /* RESULT UI */
-
-      resultText.innerHTML = `
-
-        <div class="nutrition-title">
-
-          <h2>🍜 ${foodName}</h2>
-
+    if (data.error) {
+      result.innerHTML = `
+        <div class="error-card">
+          ${data.error}
         </div>
+      `;
+      return;
+    }
 
-        <div class="calorie-main">
+    const calories = Number(data.calories) || 0;
+    const protein = Number(data.protein) || 0;
+    const carbs = Number(data.carbs) || 0;
+    const fat = Number(data.fat) || 0;
 
-          ${calories} kcal
+    totalCalories += calories;
+    meals++;
 
+    updateDashboard();
+
+    addToHistory(food, calories);
+
+    result.innerHTML = `
+      <div class="nutrition-result">
+        <h2>🍜 ${data.name}</h2>
+
+        <div class="calorie-circle">
+          <span>${calories}</span>
+          <p>kcal</p>
         </div>
 
         <div class="nutrition-grid">
-
           <div class="nutrition-card">
-
             <h3>💪 Protein</h3>
-
             <p>${protein}g</p>
-
           </div>
 
           <div class="nutrition-card">
-
             <h3>⚡ Carbs</h3>
-
             <p>${carbs}g</p>
-
           </div>
 
           <div class="nutrition-card">
-
             <h3>🥑 Fat</h3>
-
             <p>${fat}g</p>
-
           </div>
-
         </div>
+      </div>
+    `;
+  } catch (error) {
+    result.innerHTML = `
+      <div class="error-card">
+        Failed to analyze food
+      </div>
+    `;
+  }
 
-      `;
+  analyzeBtn.innerHTML = "Analyze Nutrition";
+  analyzeBtn.disabled = false;
+});
 
-      resultCard.classList.remove("hidden");
+function addToHistory(food, calories) {
+  const item = document.createElement("div");
 
-      /* DASHBOARD */
+  item.className = "history-item";
 
-      totalCalories += calories;
+  item.innerHTML = `
+    <h4>🍱 ${food}</h4>
+    <p>${calories} kcal</p>
+  `;
 
-      meals.push({
-        name: foodName,
-        calories
-      });
-
-      updateDashboard();
-
-      updateHistory();
-
-    } catch (err) {
-
-      loader.classList.add("hidden");
-
-      resultText.innerHTML = `
-        <p>Something went wrong.</p>
-      `;
-
-      resultCard.classList.remove("hidden");
-
-      console.log(err);
-
-    }
-
-  };
-
-  reader.readAsDataURL(file);
-
+  historyList.prepend(item);
 }
-
-/* DASHBOARD */
 
 function updateDashboard() {
-
-  ringCalories.textContent =
-    totalCalories;
-
-  mealCount.textContent =
-    meals.length;
-
-  const remaining =
+  document.getElementById("totalCalories").innerText = totalCalories;
+  document.getElementById("mealCount").innerText = meals;
+  document.getElementById("remainingCalories").innerText =
     2000 - totalCalories;
 
-  remainingCalories.textContent =
-    `${remaining} kcal`;
+  const progress = Math.min((totalCalories / 2000) * 100, 100);
 
-  const percent =
-    Math.min(
-      (totalCalories / 2000) * 100,
-      100
-    );
+  document.getElementById("progressPercent").innerText =
+    Math.round(progress) + "%";
 
-  progressPercent.textContent =
-    `${Math.round(percent)}%`;
-
-  const circumference = 440;
-
-  const offset =
-    circumference -
-    (percent / 100) * circumference;
-
-  ringProgress.style.strokeDashoffset =
-    offset;
-
-}
-
-/* HISTORY */
-
-function updateHistory() {
-
-  historyList.innerHTML = "";
-
-  meals
-    .slice()
-    .reverse()
-    .forEach(meal => {
-
-      historyList.innerHTML += `
-
-        <div class="history-item">
-
-          <h3>
-            🍜 ${meal.name}
-          </h3>
-
-          <p>
-            ${meal.calories} kcal
-          </p>
-
-        </div>
-
-      `;
-
-    });
-
+  document.getElementById("progressFill").style.width =
+    progress + "%";
 }
