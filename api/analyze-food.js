@@ -1,48 +1,45 @@
 export default async function handler(req, res) {
-
   try {
-
-    const { foodName } = req.body;
+    const { food } = req.body;
 
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
-
-          Authorization:
-            `Bearer ${process.env.GROQ_API_KEY}`
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
         },
-
         body: JSON.stringify({
-
-          model: "gemma2-9b-it",
+          model: "llama-3.3-70b-versatile",
 
           messages: [
+            {
+              role: "system",
+              content: `
+You are a nutrition AI.
 
+Return ONLY valid JSON.
+
+Example:
+{
+  "name": "Pizza",
+  "calories": 300,
+  "protein": 12,
+  "carbs": 35,
+  "fat": 10
+}
+              `,
+            },
             {
               role: "user",
+              content: `Food: ${food}`,
+            },
+          ],
 
-              content:
-`
-Give nutrition facts for ${foodName}.
-
-Reply ONLY in this format:
-
-name: food
-calories: number
-protein: number
-carbs: number
-fat: number
-`
-            }
-
-          ]
-
-        })
-
+          temperature: 0.3,
+          max_tokens: 200,
+        }),
       }
     );
 
@@ -50,51 +47,30 @@ fat: number
 
     console.log(data);
 
-    const content =
-      data?.choices?.[0]?.message?.content;
+    const content = data.choices?.[0]?.message?.content;
 
     if (!content) {
-
       return res.status(500).json({
-        error: "No response from AI"
+        error: "No response from AI",
       });
-
     }
 
-    const calories =
-      content.match(/calories:\s*(\d+)/i)?.[1] || 0;
+    let nutrition;
 
-    const protein =
-      content.match(/protein:\s*(\d+)/i)?.[1] || 0;
+    try {
+      nutrition = JSON.parse(content);
+    } catch {
+      return res.status(500).json({
+        error: "Invalid AI response",
+      });
+    }
 
-    const carbs =
-      content.match(/carbs:\s*(\d+)/i)?.[1] || 0;
-
-    const fat =
-      content.match(/fat:\s*(\d+)/i)?.[1] || 0;
-
-    res.status(200).json({
-
-      name: foodName,
-
-      calories,
-
-      protein,
-
-      carbs,
-
-      fat
-
-    });
-
+    res.status(200).json(nutrition);
   } catch (error) {
-
     console.log(error);
 
     res.status(500).json({
-      error: "Failed to analyze food"
+      error: "Server error",
     });
-
   }
-
 }
