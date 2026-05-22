@@ -1,78 +1,78 @@
-import OpenAI from "openai";
-
 export default async function handler(req, res) {
 
   if (req.method !== "POST") {
-
     return res.status(405).json({
       error: "Method not allowed"
     });
-
   }
 
   try {
 
-    const { food } = req.body;
+    const { foodName } = req.body;
 
-    const client = new OpenAI({
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
 
-      apiKey: process.env.GROQ_API_KEY,
+        headers: {
+          "Content-Type": "application/json",
 
-      baseURL: "https://api.groq.com/openai/v1"
+          Authorization:
+            `Bearer ${process.env.GROQ_API_KEY}`
+        },
 
-    });
+        body: JSON.stringify({
 
-    const prompt = `
+          model: "llama3-70b-8192",
 
-Return ONLY raw JSON.
+          messages: [
+            {
+              role: "system",
 
-Do not explain.
-Do not add markdown.
-Do not add notes.
+              content:
+                `
+Return ONLY valid JSON.
 
-Food: ${food}
-
-Format:
-
+Example:
 {
-  "name": "food name",
-  "calories": 500,
-  "protein": 20,
-  "carbs": 60,
-  "fat": 10
+  "name": "Pizza",
+  "calories": 320,
+  "protein": 12,
+  "carbs": 35,
+  "fat": 14
 }
+`
+            },
 
-`;
+            {
+              role: "user",
 
-    const response =
-      await client.chat.completions.create({
+              content:
+                `Give nutrition for ${foodName}`
+            }
+          ],
 
-        model: "llama-3.1-8b-instant",
+          temperature: 0.2
+        })
+      }
+    );
 
-        messages: [
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
+    const data = await response.json();
 
-        temperature: 0.2
+    const text =
+      data.choices[0].message.content;
 
-      });
+    const nutrition = JSON.parse(text);
 
-    res.status(200).json({
-
-      result:
-        response.choices[0].message.content
-
-    });
+    res.status(200).json(nutrition);
 
   } catch (error) {
 
-    console.error(error);
+    console.log(error);
 
     res.status(500).json({
-      error: error.message
+      error: "Failed to analyze food"
     });
 
   }
