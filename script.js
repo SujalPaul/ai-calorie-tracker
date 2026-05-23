@@ -120,7 +120,7 @@ onAuthStateChanged(auth, (user) => {
 
   } else {
 
-    authModal.style.display = "flex";
+    authModal.style.display = "none";
 
     if (userName) {
       userName.innerText = "Guest";
