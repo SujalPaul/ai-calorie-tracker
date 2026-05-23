@@ -11,6 +11,16 @@
 </head>
 
 <body>
+  <nav class="navbar">
+  <div class="logo">
+    🍽️ NutriVision AI
+  </div>
+
+  <div class="user-section">
+    <span id="userName">Guest</span>
+    <button id="logoutBtn">Logout</button>
+  </div>
+</nav>
 
   <div class="background-blur blur1"></div>
   <div class="background-blur blur2"></div>
@@ -136,6 +146,20 @@
 
   <script type="module" src="firebase.js"></script>
 <script type="module" src="script.js"></script>
+<div class="auth-modal" id="authModal">
+  <div class="auth-box">
+    <h2 id="authTitle">Login</h2>
 
+    <input type="email" id="authEmail" placeholder="Enter email" />
+    <input type="password" id="authPassword" placeholder="Enter password" />
+
+    <button id="authSubmit">Login</button>
+
+    <p id="switchAuth">
+      Don't have an account?
+      <span>Signup</span>
+    </p>
+  </div>
+</div>
 </body>
 </html>
