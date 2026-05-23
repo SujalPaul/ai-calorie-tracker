@@ -1,240 +1,341 @@
-import { auth, db } from "./firebase.js";
+// FIREBASE
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
+  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  orderBy,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyAcisizgxdelge9Xv1erRd-8VZv3MPgdcs",
+  authDomain: "nutrivisionai-b461f.firebaseapp.com",
+  projectId: "nutrivisionai-b461f",
+  storageBucket: "nutrivisionai-b461f.firebasestorage.app",
+  messagingSenderId: "868203819952",
+  appId: "1:868203819952:web:8e6d5c3537841360d2dc75",
+  measurementId: "G-DTPBRMBNP7"
+};
 
-const uploadBox = document.getElementById("uploadBox");
-const foodImage = document.getElementById("foodImage");
-const foodInput = document.getElementById("foodInput");
-const analyzeBtn = document.getElementById("analyzeBtn");
-const resultContainer = document.getElementById("resultContainer");
-const recentList = document.getElementById("recentList");
+// INIT
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-const totalCalories = document.getElementById("totalCalories");
-const mealsCount = document.getElementById("mealsCount");
-const remainingCalories = document.getElementById("remainingCalories");
-const progressText = document.getElementById("progressText");
-const progressBar = document.getElementById("progressBar");
-
+// DOM
 const authModal = document.getElementById("authModal");
-const authTitle = document.getElementById("authTitle");
-const authEmail = document.getElementById("authEmail");
-const authPassword = document.getElementById("authPassword");
-const authSubmit = document.getElementById("authSubmit");
+const authBtn = document.getElementById("authBtn");
 const switchAuth = document.getElementById("switchAuth");
+const switchText = document.getElementById("switchText");
+const authTitle = document.getElementById("authTitle");
 
 const userName = document.getElementById("userName");
 const logoutBtn = document.getElementById("logoutBtn");
 
-let selectedImage = null;
+// LOGIN / SIGNUP TOGGLE
 let isLogin = true;
-let currentUser = null;
-
-const DAILY_GOAL = 2000;
-
-uploadBox.addEventListener("click", () => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-
-  input.onchange = (e) => {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    selectedImage = file;
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      foodImage.src = reader.result;
-      foodImage.style.display = "block";
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  input.click();
-});
 
 switchAuth.addEventListener("click", () => {
+
   isLogin = !isLogin;
 
-  authTitle.innerText = isLogin ? "Login" : "Create Account";
-  authSubmit.innerText = isLogin ? "Login" : "Signup";
+  if (isLogin) {
 
-  switchAuth.innerHTML = isLogin
-    ? `Don't have an account? <span>Signup</span>`
-    : `Already have an account? <span>Login</span>`;
-});
+    authTitle.innerText = "Login";
+    authBtn.innerText = "Login";
+    switchText.innerText = "Don't have an account?";
+    switchAuth.innerText = "Signup";
 
-authSubmit.addEventListener("click", async () => {
-  const email = authEmail.value;
-  const password = authPassword.value;
-
-  try {
-    if (isLogin) {
-      await signInWithEmailAndPassword(auth, email, password);
-    } else {
-      await createUserWithEmailAndPassword(auth, email, password);
-    }
-
-    authModal.style.display = "none";
-  } catch (err) {
-    alert(err.message);
-  }
-});
-
-logoutBtn.addEventListener("click", async () => {
-  await signOut(auth);
-});
-
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    currentUser = user;
-
-    authModal.style.display = "none";
-
-    userName.innerText = user.email.split("@")[0];
-
-    loadHistory();
   } else {
-    authModal.style.display = "flex";
+
+    authTitle.innerText = "Signup";
+    authBtn.innerText = "Create Account";
+    switchText.innerText = "Already have an account?";
+    switchAuth.innerText = "Login";
+
   }
+
 });
 
-analyzeBtn.addEventListener("click", async () => {
-  const food = foodInput.value.trim();
+// LOGIN / SIGNUP
+authBtn.addEventListener("click", async () => {
 
-  if (!food) {
-    alert("Enter food name");
+  const email =
+    document.getElementById("authEmail").value;
+
+  const password =
+    document.getElementById("authPassword").value;
+
+  if (!email || !password) {
+    alert("Please fill all fields");
     return;
   }
 
-  analyzeBtn.innerHTML = `
-    <div class="loader"></div>
-  `;
+  try {
 
-  analyzeBtn.disabled = true;
+    // LOGIN
+    if (isLogin) {
 
-  setTimeout(async () => {
-    const calories = Math.floor(Math.random() * 400) + 150;
-    const protein = Math.floor(Math.random() * 20) + 5;
-    const carbs = Math.floor(Math.random() * 60) + 10;
-    const fat = Math.floor(Math.random() * 20) + 2;
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-    renderResult(food, calories, protein, carbs, fat);
+    }
 
-    await saveMeal(food, calories, protein, carbs, fat);
+    // SIGNUP
+    else {
 
-    analyzeBtn.innerHTML = "Analyze Nutrition";
-    analyzeBtn.disabled = false;
-  }, 1800);
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      alert("Account created successfully!");
+
+    }
+
+  } catch (error) {
+
+    alert(error.message);
+
+  }
+
 });
 
-function renderResult(food, calories, protein, carbs, fat) {
-  resultContainer.innerHTML = `
-    <div class="nutrition-card fade-in">
-      <h2>🍜 ${capitalize(food)}</h2>
+// AUTH STATE
+onAuthStateChanged(auth, (user) => {
 
-      <div class="calorie-circle">
-        <h1>${calories}</h1>
-        <span>kcal</span>
-      </div>
+  if (user) {
 
-      <div class="macro-grid">
-        <div class="macro-card">
-          <span>💪 Protein</span>
-          <h3>${protein}g</h3>
-        </div>
+    authModal.style.display = "none";
 
-        <div class="macro-card">
-          <span>⚡ Carbs</span>
-          <h3>${carbs}g</h3>
-        </div>
+    if (userName) {
+      userName.innerText = user.email;
+    }
 
-        <div class="macro-card">
-          <span>🥑 Fat</span>
-          <h3>${fat}g</h3>
-        </div>
-      </div>
-    </div>
-  `;
-}
+  } else {
 
-async function saveMeal(food, calories, protein, carbs, fat) {
-  if (!currentUser) return;
+    authModal.style.display = "flex";
 
-  await addDoc(collection(db, "meals"), {
-    uid: currentUser.uid,
-    food,
-    calories,
-    protein,
-    carbs,
-    fat,
-    createdAt: serverTimestamp()
+    if (userName) {
+      userName.innerText = "Guest";
+    }
+
+  }
+
+});
+
+// LOGOUT
+if (logoutBtn) {
+
+  logoutBtn.addEventListener("click", async () => {
+
+    await signOut(auth);
+
   });
 
-  loadHistory();
 }
 
-async function loadHistory() {
-  if (!currentUser) return;
+// ==========================
+// FOOD ANALYSIS
+// ==========================
 
-  const q = query(
-    collection(db, "meals"),
-    where("uid", "==", currentUser.uid)
-  );
+const analyzeBtn =
+  document.getElementById("analyzeBtn");
 
-  const querySnapshot = await getDocs(q);
+const foodInput =
+  document.getElementById("foodInput");
 
-  recentList.innerHTML = "";
+const imageInput =
+  document.getElementById("imageInput");
 
-  let total = 0;
-  let meals = 0;
+const foodPreview =
+  document.getElementById("foodPreview");
 
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
+const result =
+  document.getElementById("result");
 
-    meals++;
-    total += data.calories;
+const historyList =
+  document.getElementById("historyList");
 
-    recentList.innerHTML += `
-      <div class="history-card">
-        <h4>🍱 ${capitalize(data.food)}</h4>
-        <p>${data.calories} kcal</p>
-      </div>
-    `;
+let totalCalories = 0;
+let meals = 0;
+
+if (imageInput) {
+
+  imageInput.addEventListener("change", () => {
+
+    const file = imageInput.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+
+      foodPreview.src = e.target.result;
+
+    };
+
+    reader.readAsDataURL(file);
+
   });
 
-  totalCalories.innerText = total;
-  mealsCount.innerText = meals;
-
-  const remaining = DAILY_GOAL - total;
-
-  remainingCalories.innerText = remaining > 0 ? remaining : 0;
-
-  const progress = Math.min((total / DAILY_GOAL) * 100, 100);
-
-  progressText.innerText = `${Math.floor(progress)}%`;
-
-  progressBar.style.width = `${progress}%`;
 }
 
-function capitalize(text) {
-  return text.charAt(0).toUpperCase() + text.slice(1);
+if (analyzeBtn) {
+
+  analyzeBtn.addEventListener("click", async () => {
+
+    const food =
+      foodInput.value.trim();
+
+    if (!food) {
+      alert("Enter food name");
+      return;
+    }
+
+    analyzeBtn.innerText = "Analyzing...";
+    analyzeBtn.disabled = true;
+
+    try {
+
+      // DEMO DATA
+      const calories =
+        Math.floor(Math.random() * 500) + 100;
+
+      const protein =
+        Math.floor(Math.random() * 30) + 1;
+
+      const carbs =
+        Math.floor(Math.random() * 60) + 1;
+
+      const fat =
+        Math.floor(Math.random() * 20) + 1;
+
+      result.innerHTML = `
+      
+      <div class="nutrition-card">
+
+        <h2>🍜 ${food}</h2>
+
+        <div class="calorie-circle">
+          <h1>${calories}</h1>
+          <p>kcal</p>
+        </div>
+
+        <div class="macro-grid">
+
+          <div class="macro-card">
+            <span>💪 Protein</span>
+            <h3>${protein}g</h3>
+          </div>
+
+          <div class="macro-card">
+            <span>⚡ Carbs</span>
+            <h3>${carbs}g</h3>
+          </div>
+
+          <div class="macro-card">
+            <span>🥑 Fat</span>
+            <h3>${fat}g</h3>
+          </div>
+
+        </div>
+
+      </div>
+
+      `;
+
+      // HISTORY
+      if (historyList) {
+
+        const item =
+          document.createElement("div");
+
+        item.className = "history-item";
+
+        item.innerHTML = `
+          <strong>🍱 ${food}</strong>
+          <p>${calories} kcal</p>
+        `;
+
+        historyList.prepend(item);
+
+      }
+
+      // DASHBOARD
+      totalCalories += calories;
+      meals++;
+
+      updateDashboard();
+
+    } catch (error) {
+
+      result.innerHTML =
+        `<p>Error analyzing food</p>`;
+
+    }
+
+    analyzeBtn.innerText =
+      "Analyze Nutrition";
+
+    analyzeBtn.disabled = false;
+
+  });
+
+}
+
+// DASHBOARD
+function updateDashboard() {
+
+  const caloriesText =
+    document.getElementById("totalCalories");
+
+  const mealsText =
+    document.getElementById("mealCount");
+
+  const remainingText =
+    document.getElementById("remainingCalories");
+
+  const progressText =
+    document.getElementById("progressPercent");
+
+  const progressBar =
+    document.getElementById("progressBar");
+
+  const remaining =
+    2000 - totalCalories;
+
+  const progress =
+    Math.min(
+      (totalCalories / 2000) * 100,
+      100
+    );
+
+  if (caloriesText)
+    caloriesText.innerText =
+      totalCalories;
+
+  if (mealsText)
+    mealsText.innerText =
+      meals;
+
+  if (remainingText)
+    remainingText.innerText =
+      remaining;
+
+  if (progressText)
+    progressText.innerText =
+      `${Math.floor(progress)}%`;
+
+  if (progressBar)
+    progressBar.style.width =
+      `${progress}%`;
+
 }
