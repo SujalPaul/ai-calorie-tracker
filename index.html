@@ -1,52 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>NutriVision AI</title>
 
   <link rel="stylesheet" href="style.css"/>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
+
+  <div class="bg-blur blur1"></div>
+  <div class="bg-blur blur2"></div>
+
+  <!-- NAVBAR -->
+
   <nav class="navbar">
-  <div class="logo">
-    🍽️ NutriVision AI
-  </div>
 
-  <div class="user-section">
-    <span id="userName">Guest</span>
-    <button id="logoutBtn">Logout</button>
-  </div>
-</nav>
+    <div class="logo">
+      🍽️ NutriVision AI
+    </div>
 
-  <div class="background-blur blur1"></div>
-  <div class="background-blur blur2"></div>
+    <div class="nav-right">
 
-  <header>
-    <h1>🍽️ NutriVision AI</h1>
-  </header>
+      <span id="userName">
+        Guest
+      </span>
 
-  <main class="dashboard-layout">
+      <button id="logoutBtn">
+        Logout
+      </button>
+
+    </div>
+
+  </nav>
+
+  <!-- MAIN -->
+
+  <main class="container">
 
     <!-- DASHBOARD -->
 
-    <section class="dashboard-card">
+    <section class="dashboard card">
 
-      <h2>🔥 Daily Dashboard</h2>
+      <div class="dashboard-left">
 
-      <div class="dashboard-grid">
+        <div class="calorie-ring">
 
-        <div class="dashboard-circle">
-          <div class="circle-inner">
-            <h1 id="totalCalories">0</h1>
+          <div class="ring-inner">
+
+            <h1 id="totalCalories">
+              0
+            </h1>
+
             <p>kcal</p>
+
           </div>
+
         </div>
 
-        <div class="dashboard-stats">
+      </div>
+
+      <div class="dashboard-right">
+
+        <h2>
+          🔥 Daily Dashboard
+        </h2>
+
+        <div class="stats-grid">
 
           <div class="stat-card">
             <span>🎯 Goal</span>
@@ -60,61 +84,63 @@
 
           <div class="stat-card">
             <span>⚡ Remaining</span>
-            <h3 id="remainingCalories">2000</h3>
+            <h3 id="remainingCalories">
+              2000
+            </h3>
           </div>
 
           <div class="stat-card">
             <span>🔥 Progress</span>
-            <h3 id="progressPercent">0%</h3>
+            <h3 id="progressPercent">
+              0%
+            </h3>
           </div>
+
+        </div>
+
+        <div class="progress-track">
+
+          <div
+            class="progress-bar"
+            id="progressBar"
+          ></div>
 
         </div>
 
       </div>
 
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-
     </section>
 
-    <!-- CHARTS -->
+    <!-- ANALYSIS -->
 
-    <section class="charts-section">
+    <section class="analysis-grid">
 
-      <div class="chart-card">
-        <h2>📈 Calories Overview</h2>
-        <canvas id="calorieChart"></canvas>
-      </div>
+      <div class="analysis card">
 
-      <div class="chart-card">
-        <h2>🥗 Macro Split</h2>
-        <canvas id="macroChart"></canvas>
-      </div>
+        <h1>
+          Smart Nutrition Analysis
+        </h1>
 
-    </section>
-
-    <!-- MAIN GRID -->
-
-    <section class="main-grid">
-
-      <!-- ANALYZER -->
-
-      <div class="glass-card">
-
-        <h1>Smart Nutrition Analysis</h1>
-
-        <p class="subtitle">
+        <p>
           Upload food images and estimate calories instantly with AI
         </p>
 
-        <label for="imageInput" class="upload-box">
+        <label class="upload-box">
+
           📸 Upload Food Image
+
+          <input
+            type="file"
+            id="imageInput"
+            hidden
+          />
+
         </label>
 
-        <input type="file" id="imageInput" accept="image/*"/>
-
-        <img id="imagePreview"/>
+        <img
+          id="foodPreview"
+          class="food-preview"
+        />
 
         <input
           type="text"
@@ -132,9 +158,11 @@
 
       <!-- HISTORY -->
 
-      <div class="history-card">
+      <div class="history card">
 
-        <h2>📊 Recent Analysis</h2>
+        <h2>
+          📊 Recent Analysis
+        </h2>
 
         <div id="historyList"></div>
 
@@ -144,22 +172,52 @@
 
   </main>
 
-  <script type="module" src="firebase.js"></script>
-<script type="module" src="script.js"></script>
-<div class="auth-modal" id="authModal">
-  <div class="auth-box">
-    <h2 id="authTitle">Login</h2>
+  <!-- AUTH MODAL -->
 
-    <input type="email" id="authEmail" placeholder="Enter email" />
-    <input type="password" id="authPassword" placeholder="Enter password" />
+  <div class="auth-modal" id="authModal">
 
-    <button id="authSubmit">Login</button>
+    <div class="auth-card">
 
-    <p id="switchAuth">
-      Don't have an account?
-      <span>Signup</span>
-    </p>
+      <h1 id="authTitle">
+        Login
+      </h1>
+
+      <input
+        type="email"
+        id="authEmail"
+        placeholder="Enter email"
+      />
+
+      <input
+        type="password"
+        id="authPassword"
+        placeholder="Enter password"
+      />
+
+      <button id="authBtn">
+        Login
+      </button>
+
+      <p class="switch-auth">
+
+        <span id="switchText">
+          Don't have an account?
+        </span>
+
+        <span id="switchAuth">
+          Signup
+        </span>
+
+      </p>
+
+    </div>
+
   </div>
-</div>
+
+  <script
+    type="module"
+    src="script.js"
+  ></script>
+
 </body>
 </html>
