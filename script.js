@@ -339,130 +339,137 @@ function updateDashboard() {
       `${progress}%`;
 
 }
-// CALORIE CHART
+// ===== CHARTS =====
 
-const calorieCtx = document
-.getElementById("calorieChart");
+const calorieCanvas = document.getElementById("calorieChart");
 
-new Chart(calorieCtx, {
-    type: "bar",
+if (calorieCanvas) {
 
-    data: {
-        labels: [
-            "Mon",
-            "Tue",
-            "Wed",
-            "Thu",
-            "Fri",
-            "Sat",
-            "Sun"
-        ],
+    new Chart(calorieCanvas, {
 
-        datasets: [{
-            label: "Calories",
+        type: "bar",
 
-            data: [
-                1800,
-                2200,
-                1900,
-                2500,
-                1700,
-                2100,
-                1500
+        data: {
+            labels: [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
             ],
 
-            borderRadius: 12,
+            datasets: [{
+                label: "Calories",
 
-            backgroundColor: [
-                "#ff00cc",
-                "#c026d3",
-                "#9333ea",
-                "#7c3aed",
-                "#6366f1",
-                "#3b82f6",
-                "#2563eb"
-            ]
-        }]
-    },
+                data: [
+                    1800,
+                    2200,
+                    1900,
+                    2500,
+                    1700,
+                    2100,
+                    1500
+                ],
 
-    options: {
-        responsive: true,
+                borderRadius: 12,
 
-        plugins: {
-            legend: {
-                labels: {
-                    color: "white"
-                }
-            }
+                backgroundColor: [
+                    "#ff00cc",
+                    "#c026d3",
+                    "#9333ea",
+                    "#7c3aed",
+                    "#6366f1",
+                    "#3b82f6",
+                    "#2563eb"
+                ]
+            }]
         },
 
-        scales: {
-            y: {
-                ticks: {
-                    color: "white"
-                },
+        options: {
 
-                grid: {
-                    color: "rgba(255,255,255,0.05)"
+            responsive: true,
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "white"
+                    }
                 }
             },
 
-            x: {
-                ticks: {
-                    color: "white"
+            scales: {
+
+                y: {
+                    ticks: {
+                        color: "white"
+                    },
+
+                    grid: {
+                        color: "rgba(255,255,255,0.05)"
+                    }
                 },
 
-                grid: {
-                    display: false
+                x: {
+                    ticks: {
+                        color: "white"
+                    },
+
+                    grid: {
+                        display: false
+                    }
                 }
             }
         }
-    }
-});
+    });
+}
 
-// MACRO CHART
+const macroCanvas = document.getElementById("macroChart");
 
-const macroCtx = document
-.getElementById("macroChart");
+if (macroCanvas) {
 
-new Chart(macroCtx, {
+    new Chart(macroCanvas, {
 
-    type: "doughnut",
+        type: "doughnut",
 
-    data: {
-        labels: [
-            "Protein",
-            "Carbs",
-            "Fat"
-        ],
+        data: {
 
-        datasets: [{
-            data: [
-                30,
-                50,
-                20
+            labels: [
+                "Protein",
+                "Carbs",
+                "Fat"
             ],
 
-            backgroundColor: [
-                "#ff00cc",
-                "#7c3aed",
-                "#3b82f6"
-            ],
+            datasets: [{
 
-            borderWidth: 0
-        }]
-    },
+                data: [
+                    30,
+                    50,
+                    20
+                ],
 
-    options: {
+                backgroundColor: [
+                    "#ff00cc",
+                    "#7c3aed",
+                    "#3b82f6"
+                ],
 
-        responsive: true,
+                borderWidth: 0
+            }]
+        },
 
-        plugins: {
-            legend: {
-                labels: {
-                    color: "white"
+        options: {
+
+            responsive: true,
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "white"
+                    }
                 }
             }
         }
-    }
-});
+    });
+}
