@@ -551,3 +551,18 @@ body{
         font-size:1.5rem;
     }
 }
+/* CHARTS */
+
+.chart-card{
+    padding:25px;
+    min-height:300px;
+}
+
+.chart-card h2{
+    margin-bottom:20px;
+}
+
+canvas{
+    width:100% !important;
+    height:220px !important;
+}
