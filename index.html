@@ -1,223 +1,129 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <title>NutriVision AI</title>
-
-  <link rel="stylesheet" href="style.css"/>
-
-</head>
-
 <body>
 
-  <div class="bg-blur blur1"></div>
-  <div class="bg-blur blur2"></div>
+    <nav class="navbar">
+        <div class="logo">🍽 NutriVision AI</div>
 
-  <!-- NAVBAR -->
+        <div class="nav-right">
+            <span id="userName">Guest</span>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </nav>
 
-  <nav class="navbar">
+    <div class="main-container">
 
-    <div class="logo">
-      🍽️ NutriVision AI
-    </div>
+        <!-- DASHBOARD -->
 
-    <div class="nav-right">
+        <div class="glass-card dashboard">
 
-      <span id="userName">
-        Guest
-      </span>
+            <h1 class="dashboard-title">🔥 Daily Dashboard</h1>
 
-      <button id="logoutBtn">
-        Logout
-      </button>
+            <div class="dashboard-grid">
 
-    </div>
+                <div class="progress-ring">
+                    <div class="progress-inner">
+                        <h1 id="caloriesConsumed">0</h1>
+                        <span>kcal</span>
+                    </div>
+                </div>
 
-  </nav>
+                <div>
 
-  <!-- MAIN -->
+                    <div class="stats-grid">
 
-  <main class="container">
+                        <div class="stat-box">
+                            <p>🎯 Goal</p>
+                            <h2>2000 kcal</h2>
+                        </div>
 
-    <!-- DASHBOARD -->
+                        <div class="stat-box">
+                            <p>🍽 Meals</p>
+                            <h2 id="mealCount">0</h2>
+                        </div>
 
-    <section class="dashboard card">
+                        <div class="stat-box">
+                            <p>⚡ Remaining</p>
+                            <h2 id="remainingCalories">2000</h2>
+                        </div>
 
-      <div class="dashboard-left">
+                        <div class="stat-box">
+                            <p>🔥 Progress</p>
+                            <h2 id="progressPercent">0%</h2>
+                        </div>
 
-        <div class="calorie-ring">
+                    </div>
 
-          <div class="ring-inner">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
 
-            <h1 id="totalCalories">
-              0
-            </h1>
+                </div>
 
-            <p>kcal</p>
-
-          </div>
+            </div>
 
         </div>
 
-      </div>
+        <!-- CONTENT -->
 
-      <div class="dashboard-right">
+        <div class="content-grid">
 
-        <h2>
-          🔥 Daily Dashboard
-        </h2>
+            <!-- ANALYSIS -->
 
-        <div class="stats-grid">
+            <div class="glass-card analysis-card">
 
-          <div class="stat-card">
-            <span>🎯 Goal</span>
-            <h3>2000 kcal</h3>
-          </div>
+                <h1>Smart Nutrition Analysis</h1>
 
-          <div class="stat-card">
-            <span>🍽 Meals</span>
-            <h3 id="mealCount">0</h3>
-          </div>
+                <p>
+                    Upload food images and estimate calories instantly with AI
+                </p>
 
-          <div class="stat-card">
-            <span>⚡ Remaining</span>
-            <h3 id="remainingCalories">
-              2000
-            </h3>
-          </div>
+                <label for="imageInput" class="upload-box">
+                    📸 Upload Food Image
+                </label>
 
-          <div class="stat-card">
-            <span>🔥 Progress</span>
-            <h3 id="progressPercent">
-              0%
-            </h3>
-          </div>
+                <input
+                    type="file"
+                    id="imageInput"
+                    hidden
+                >
+
+                <img
+                    id="previewImage"
+                    class="food-preview"
+                    style="display:none;"
+                >
+
+                <input
+                    type="text"
+                    id="foodInput"
+                    class="food-input"
+                    placeholder="Describe your food..."
+                >
+
+                <button
+                    class="analyze-btn"
+                    id="analyzeBtn"
+                >
+                    Analyze Nutrition
+                </button>
+
+                <div id="result"></div>
+
+            </div>
+
+            <!-- RECENT -->
+
+            <div class="glass-card recent-card">
+
+                <h2>📊 Recent Analysis</h2>
+
+                <div id="recentList"></div>
+
+            </div>
 
         </div>
-
-        <div class="progress-track">
-
-          <div
-            class="progress-bar"
-            id="progressBar"
-          ></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- ANALYSIS -->
-
-    <section class="analysis-grid">
-
-      <div class="analysis card">
-
-        <h1>
-          Smart Nutrition Analysis
-        </h1>
-
-        <p>
-          Upload food images and estimate calories instantly with AI
-        </p>
-
-        <label class="upload-box">
-
-          📸 Upload Food Image
-
-          <input
-            type="file"
-            id="imageInput"
-            hidden
-          />
-
-        </label>
-
-        <img
-          id="foodPreview"
-          class="food-preview"
-        />
-
-        <input
-          type="text"
-          id="foodInput"
-          placeholder="Describe your food..."
-        />
-
-        <button id="analyzeBtn">
-          Analyze Nutrition
-        </button>
-
-        <div id="result"></div>
-
-      </div>
-
-      <!-- HISTORY -->
-
-      <div class="history card">
-
-        <h2>
-          📊 Recent Analysis
-        </h2>
-
-        <div id="historyList"></div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-  <!-- AUTH MODAL -->
-
-  <div class="auth-modal" id="authModal">
-
-    <div class="auth-card">
-
-      <h1 id="authTitle">
-        Login
-      </h1>
-
-      <input
-        type="email"
-        id="authEmail"
-        placeholder="Enter email"
-      />
-
-      <input
-        type="password"
-        id="authPassword"
-        placeholder="Enter password"
-      />
-
-      <button id="authBtn">
-        Login
-      </button>
-
-      <p class="switch-auth">
-
-        <span id="switchText">
-          Don't have an account?
-        </span>
-
-        <span id="switchAuth">
-          Signup
-        </span>
-
-      </p>
 
     </div>
 
-  </div>
-
-  <script
-    type="module"
-    src="script.js"
-  ></script>
+    <script type="module" src="script.js"></script>
 
 </body>
-</html>
