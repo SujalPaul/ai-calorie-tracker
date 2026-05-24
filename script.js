@@ -1,475 +1,163 @@
-// FIREBASE
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+const foodImageInput =
+document.getElementById("foodImage");
 
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-// FIREBASE CONFIG
-const firebaseConfig = {
-  apiKey: "AIzaSyAcisizgxdelge9Xv1erRd-8VZv3MPgdcs",
-  authDomain: "nutrivisionai-b461f.firebaseapp.com",
-  projectId: "nutrivisionai-b461f",
-  storageBucket: "nutrivisionai-b461f.firebasestorage.app",
-  messagingSenderId: "868203819952",
-  appId: "1:868203819952:web:8e6d5c3537841360d2dc75",
-  measurementId: "G-DTPBRMBNP7"
-};
-
-// INIT
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// DOM
-const authModal = document.getElementById("authModal");
-const authBtn = document.getElementById("authBtn");
-const switchAuth = document.getElementById("switchAuth");
-const switchText = document.getElementById("switchText");
-const authTitle = document.getElementById("authTitle");
-
-const userName = document.getElementById("userName");
-const logoutBtn = document.getElementById("logoutBtn");
-
-// LOGIN / SIGNUP TOGGLE
-let isLogin = true;
-
-switchAuth.addEventListener("click", () => {
-
-  isLogin = !isLogin;
-
-  if (isLogin) {
-
-    authTitle.innerText = "Login";
-    authBtn.innerText = "Login";
-    switchText.innerText = "Don't have an account?";
-    switchAuth.innerText = "Signup";
-
-  } else {
-
-    authTitle.innerText = "Signup";
-    authBtn.innerText = "Create Account";
-    switchText.innerText = "Already have an account?";
-    switchAuth.innerText = "Login";
-
-  }
-
-});
-
-// LOGIN / SIGNUP
-authBtn.addEventListener("click", async () => {
-
-  const email =
-    document.getElementById("authEmail").value;
-
-  const password =
-    document.getElementById("authPassword").value;
-
-  if (!email || !password) {
-    alert("Please fill all fields");
-    return;
-  }
-
-  try {
-
-    // LOGIN
-    if (isLogin) {
-
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-    }
-
-    // SIGNUP
-    else {
-
-      await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      alert("Account created successfully!");
-
-    }
-
-  } catch (error) {
-
-    alert(error.message);
-
-  }
-
-});
-
-// AUTH STATE
-onAuthStateChanged(auth, (user) => {
-
-  if (user) {
-
-    authModal.style.display = "none";
-
-    if (userName) {
-      userName.innerText = user.email;
-    }
-
-  } else {
-
-    authModal.style.display = "none";
-
-    if (userName) {
-      userName.innerText = "Guest";
-    }
-
-  }
-
-});
-
-// LOGOUT
-if (logoutBtn) {
-
-  logoutBtn.addEventListener("click", async () => {
-
-    await signOut(auth);
-
-  });
-
-}
-
-// ==========================
-// FOOD ANALYSIS
-// ==========================
+const previewImage =
+document.getElementById("previewImage");
 
 const analyzeBtn =
-  document.getElementById("analyzeBtn");
+document.getElementById("analyzeBtn");
 
-const foodInput =
-  document.getElementById("foodInput");
+const resultCard =
+document.getElementById("resultCard");
 
-const imageInput =
-  document.getElementById("imageInput");
+const foodTitle =
+document.getElementById("foodTitle");
 
-const foodPreview =
-  document.getElementById("foodPreview");
+const foodCalories =
+document.getElementById("foodCalories");
 
-const result =
-  document.getElementById("result");
+const protein =
+document.getElementById("protein");
 
-const historyList =
-  document.getElementById("historyList");
+const carbs =
+document.getElementById("carbs");
 
-let totalCalories = 0;
+const fat =
+document.getElementById("fat");
+
+const totalCalories =
+document.getElementById("totalCalories");
+
+const mealCount =
+document.getElementById("mealCount");
+
+const remainingCalories =
+document.getElementById("remainingCalories");
+
+const progressPercent =
+document.getElementById("progressPercent");
+
+const progressFill =
+document.getElementById("progressFill");
+
+const recentMeals =
+document.getElementById("recentMeals");
+
+let currentCalories = 0;
 let meals = 0;
 
-if (imageInput) {
+/* IMAGE PREVIEW */
 
-  imageInput.addEventListener("change", () => {
+foodImageInput.addEventListener("change",(e)=>{
 
-    const file = imageInput.files[0];
+    const file = e.target.files[0];
 
-    if (!file) return;
+    if(!file) return;
 
     const reader = new FileReader();
 
-    reader.onload = (e) => {
+    reader.onload = function(event){
 
-      foodPreview.src = e.target.result;
+        previewImage.src =
+        event.target.result;
 
+        previewImage.style.display =
+        "block";
     };
 
     reader.readAsDataURL(file);
 
-  });
+});
 
-}
+/* ANALYZE */
 
-if (analyzeBtn) {
-
-  analyzeBtn.addEventListener("click", async () => {
+analyzeBtn.addEventListener("click",()=>{
 
     const food =
-      foodInput.value.trim();
+    document.getElementById("foodInput").value;
 
-    if (!food) {
-      alert("Enter food name");
-      return;
+    if(food.trim() === ""){
+
+        alert("Please enter food name");
+
+        return;
     }
 
-    analyzeBtn.innerText = "Analyzing...";
-    analyzeBtn.disabled = true;
+    /* FAKE AI VALUES */
 
-    try {
+    const calories =
+    Math.floor(Math.random()*400)+100;
 
-      // DEMO DATA
-      const calories =
-        Math.floor(Math.random() * 500) + 100;
+    const proteinValue =
+    Math.floor(Math.random()*30)+5;
 
-      const protein =
-        Math.floor(Math.random() * 30) + 1;
+    const carbsValue =
+    Math.floor(Math.random()*50)+10;
 
-      const carbs =
-        Math.floor(Math.random() * 60) + 1;
+    const fatValue =
+    Math.floor(Math.random()*20)+3;
 
-      const fat =
-        Math.floor(Math.random() * 20) + 1;
+    /* SHOW RESULT */
 
-      result.innerHTML = `
-      
-      <div class="nutrition-card">
+    resultCard.style.display =
+    "block";
 
-        <h2>🍜 ${food}</h2>
+    foodTitle.innerText =
+    food;
 
-        <div class="calorie-circle">
-          <h1>${calories}</h1>
-          <p>kcal</p>
-        </div>
+    foodCalories.innerText =
+    calories;
 
-        <div class="macro-grid">
+    protein.innerText =
+    proteinValue + "g";
 
-          <div class="macro-card">
-            <span>💪 Protein</span>
-            <h3>${protein}g</h3>
-          </div>
+    carbs.innerText =
+    carbsValue + "g";
 
-          <div class="macro-card">
-            <span>⚡ Carbs</span>
-            <h3>${carbs}g</h3>
-          </div>
+    fat.innerText =
+    fatValue + "g";
 
-          <div class="macro-card">
-            <span>🥑 Fat</span>
-            <h3>${fat}g</h3>
-          </div>
+    /* UPDATE DASHBOARD */
 
-        </div>
+    currentCalories += calories;
 
-      </div>
+    meals++;
 
-      `;
+    totalCalories.innerText =
+    currentCalories;
 
-      // HISTORY
-      if (historyList) {
+    mealCount.innerText =
+    meals;
 
-        const item =
-          document.createElement("div");
+    remainingCalories.innerText =
+    2000 - currentCalories;
 
-        item.className = "history-item";
-
-        item.innerHTML = `
-          <strong>🍱 ${food}</strong>
-          <p>${calories} kcal</p>
-        `;
-
-        historyList.prepend(item);
-
-      }
-
-      // DASHBOARD
-      totalCalories += calories;
-      meals++;
-
-      updateDashboard();
-
-    } catch (error) {
-
-      result.innerHTML =
-        `<p>Error analyzing food</p>`;
-
-    }
-
-    analyzeBtn.innerText =
-      "Analyze Nutrition";
-
-    analyzeBtn.disabled = false;
-
-  });
-
-}
-
-// DASHBOARD
-function updateDashboard() {
-
-  const caloriesText =
-    document.getElementById("totalCalories");
-
-  const mealsText =
-    document.getElementById("mealCount");
-
-  const remainingText =
-    document.getElementById("remainingCalories");
-
-  const progressText =
-    document.getElementById("progressPercent");
-
-  const progressBar =
-    document.getElementById("progressBar");
-
-  const remaining =
-    2000 - totalCalories;
-
-  const progress =
+    const progress =
     Math.min(
-      (totalCalories / 2000) * 100,
-      100
+        (currentCalories / 2000) * 100,
+        100
     );
 
-  if (caloriesText)
-    caloriesText.innerText =
-      totalCalories;
+    progressPercent.innerText =
+    progress.toFixed(0) + "%";
 
-  if (mealsText)
-    mealsText.innerText =
-      meals;
+    progressFill.style.width =
+    progress + "%";
 
-  if (remainingText)
-    remainingText.innerText =
-      remaining;
+    /* RECENT */
 
-  if (progressText)
-    progressText.innerText =
-      `${Math.floor(progress)}%`;
+    const item =
+    document.createElement("div");
 
-  if (progressBar)
-    progressBar.style.width =
-      `${progress}%`;
+    item.className =
+    "recent-item";
 
-}
-// ===== CHARTS =====
+    item.innerHTML = `
+        🍜 ${food}
+        <br>
+        ${calories} kcal
+    `;
 
-const calorieCanvas = document.getElementById("calorieChart");
+    recentMeals.prepend(item);
 
-if (calorieCanvas) {
-
-    new Chart(calorieCanvas, {
-
-        type: "bar",
-
-        data: {
-            labels: [
-                "Mon",
-                "Tue",
-                "Wed",
-                "Thu",
-                "Fri",
-                "Sat",
-                "Sun"
-            ],
-
-            datasets: [{
-                label: "Calories",
-
-                data: [
-                    1800,
-                    2200,
-                    1900,
-                    2500,
-                    1700,
-                    2100,
-                    1500
-                ],
-
-                borderRadius: 12,
-
-                backgroundColor: [
-                    "#ff00cc",
-                    "#c026d3",
-                    "#9333ea",
-                    "#7c3aed",
-                    "#6366f1",
-                    "#3b82f6",
-                    "#2563eb"
-                ]
-            }]
-        },
-
-        options: {
-
-            responsive: true,
-
-            plugins: {
-                legend: {
-                    labels: {
-                        color: "white"
-                    }
-                }
-            },
-
-            scales: {
-
-                y: {
-                    ticks: {
-                        color: "white"
-                    },
-
-                    grid: {
-                        color: "rgba(255,255,255,0.05)"
-                    }
-                },
-
-                x: {
-                    ticks: {
-                        color: "white"
-                    },
-
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
-}
-
-const macroCanvas = document.getElementById("macroChart");
-
-if (macroCanvas) {
-
-    new Chart(macroCanvas, {
-
-        type: "doughnut",
-
-        data: {
-
-            labels: [
-                "Protein",
-                "Carbs",
-                "Fat"
-            ],
-
-            datasets: [{
-
-                data: [
-                    30,
-                    50,
-                    20
-                ],
-
-                backgroundColor: [
-                    "#ff00cc",
-                    "#7c3aed",
-                    "#3b82f6"
-                ],
-
-                borderWidth: 0
-            }]
-        },
-
-        options: {
-
-            responsive: true,
-
-            plugins: {
-                legend: {
-                    labels: {
-                        color: "white"
-                    }
-                }
-            }
-        }
-    });
-}
+});
