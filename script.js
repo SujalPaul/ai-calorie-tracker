@@ -43,16 +43,23 @@ document.getElementById("progressFill");
 const recentMeals =
 document.getElementById("recentMeals");
 
+/* TOTALS */
+
 let currentCalories = 0;
+
 let meals = 0;
+
+let totalProtein = 0;
+let totalCarbs = 0;
+let totalFat = 0;
 
 /* IMAGE PREVIEW */
 
-foodImageInput.addEventListener("change",(e)=>{
+foodImageInput.addEventListener("change", (e) => {
 
     const file = e.target.files[0];
 
-    if(!file) return;
+    if (!file) return;
 
     const reader = new FileReader();
 
@@ -69,12 +76,153 @@ foodImageInput.addEventListener("change",(e)=>{
 
 });
 
+/* CALORIE CHART */
+
+const calorieCtx =
+document
+.getElementById("calorieChart")
+.getContext("2d");
+
+const calorieChart =
+new Chart(calorieCtx, {
+
+    type: "line",
+
+    data: {
+
+        labels: [],
+
+        datasets: [{
+
+            label: "Calories",
+
+            data: [],
+
+            borderColor: "#7c4dff",
+
+            backgroundColor:
+            "rgba(124,77,255,0.2)",
+
+            tension: 0.4,
+
+            fill: true,
+
+            pointRadius: 5,
+
+            pointBackgroundColor:
+            "#ff00c8"
+
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+
+                labels: {
+
+                    color: "white"
+                }
+            }
+        },
+
+        scales: {
+
+            x: {
+
+                ticks: {
+
+                    color: "white"
+                },
+
+                grid: {
+
+                    color:
+                    "rgba(255,255,255,0.05)"
+                }
+            },
+
+            y: {
+
+                ticks: {
+
+                    color: "white"
+                },
+
+                grid: {
+
+                    color:
+                    "rgba(255,255,255,0.05)"
+                }
+            }
+        }
+    }
+});
+
+/* MACRO CHART */
+
+const macroCtx =
+document
+.getElementById("macroChart")
+.getContext("2d");
+
+const macroChart =
+new Chart(macroCtx, {
+
+    type: "doughnut",
+
+    data: {
+
+        labels: [
+            "Protein",
+            "Carbs",
+            "Fat"
+        ],
+
+        datasets: [{
+
+            data: [0,0,0],
+
+            backgroundColor: [
+
+                "#ff00c8",
+                "#7c4dff",
+                "#2563eb"
+            ],
+
+            borderWidth: 0
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+
+                labels: {
+
+                    color: "white"
+                }
+            }
+        }
+    }
+});
+
 /* ANALYZE */
 
-analyzeBtn.addEventListener("click",()=>{
+analyzeBtn.addEventListener("click", () => {
 
     const food =
-    document.getElementById("foodInput").value;
+    document
+    .getElementById("foodInput")
+    .value;
 
     if(food.trim() === ""){
 
@@ -83,7 +231,7 @@ analyzeBtn.addEventListener("click",()=>{
         return;
     }
 
-    /* FAKE AI VALUES */
+    /* RANDOM AI VALUES */
 
     const calories =
     Math.floor(Math.random()*400)+100;
@@ -117,11 +265,19 @@ analyzeBtn.addEventListener("click",()=>{
     fat.innerText =
     fatValue + "g";
 
-    /* UPDATE DASHBOARD */
+    /* UPDATE TOTALS */
 
     currentCalories += calories;
 
     meals++;
+
+    totalProtein += proteinValue;
+
+    totalCarbs += carbsValue;
+
+    totalFat += fatValue;
+
+    /* DASHBOARD */
 
     totalCalories.innerText =
     currentCalories;
@@ -144,7 +300,7 @@ analyzeBtn.addEventListener("click",()=>{
     progressFill.style.width =
     progress + "%";
 
-    /* RECENT */
+    /* RECENT MEALS */
 
     const item =
     document.createElement("div");
@@ -159,5 +315,28 @@ analyzeBtn.addEventListener("click",()=>{
     `;
 
     recentMeals.prepend(item);
+
+    /* UPDATE CALORIE CHART */
+
+    calorieChart.data.labels.push(
+        "Meal " + meals
+    );
+
+    calorieChart.data.datasets[0].data.push(
+        calories
+    );
+
+    calorieChart.update();
+
+    /* UPDATE MACRO CHART */
+
+    macroChart.data.datasets[0].data = [
+
+        totalProtein,
+        totalCarbs,
+        totalFat
+    ];
+
+    macroChart.update();
 
 });
