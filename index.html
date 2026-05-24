@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
 
     <title>NutriVision AI</title>
 
@@ -12,6 +18,11 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+
+    <!-- CHART JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body>
@@ -21,16 +32,23 @@
     <nav class="navbar">
 
         <div class="logo">
+
             <i class="fa-solid fa-utensils"></i>
+
             NutriVision AI
+
         </div>
 
         <div class="nav-right">
+
             <span>Guest</span>
 
             <button class="logout-btn">
+
                 Logout
+
             </button>
+
         </div>
 
     </nav>
@@ -43,20 +61,20 @@
 
         <section class="glass-card dashboard-card">
 
-            <h2>
-                🔥 Daily Dashboard
-            </h2>
+            <h2>🔥 Daily Dashboard</h2>
 
             <div class="dashboard-content">
 
                 <div class="circle-progress">
 
                     <div class="circle-inner">
+
                         <h1 id="totalCalories">
                             0
                         </h1>
 
                         <p>kcal</p>
+
                     </div>
 
                 </div>
@@ -64,27 +82,41 @@
                 <div class="stats-grid">
 
                     <div class="stat-box">
+
                         <p>🎯 Goal</p>
+
                         <h3>2000 kcal</h3>
+
                     </div>
 
                     <div class="stat-box">
+
                         <p>🍽 Meals</p>
-                        <h3 id="mealCount">0</h3>
+
+                        <h3 id="mealCount">
+                            0
+                        </h3>
+
                     </div>
 
                     <div class="stat-box">
+
                         <p>⚡ Remaining</p>
+
                         <h3 id="remainingCalories">
                             2000
                         </h3>
+
                     </div>
 
                     <div class="stat-box">
+
                         <p>🔥 Progress</p>
+
                         <h3 id="progressPercent">
                             0%
                         </h3>
+
                     </div>
 
                 </div>
@@ -107,18 +139,28 @@
         <section class="charts-grid">
 
             <div class="glass-card chart-card">
+
                 <h2>📈 Calories Overview</h2>
+
+                <canvas id="calorieChart"></canvas>
+
             </div>
 
             <div class="glass-card chart-card">
+
                 <h2>🥗 Macro Split</h2>
+
+                <canvas id="macroChart"></canvas>
+
             </div>
 
         </section>
 
-        <!-- ANALYSIS -->
+        <!-- BOTTOM -->
 
         <section class="bottom-grid">
+
+            <!-- ANALYSIS -->
 
             <div class="glass-card analysis-card">
 
@@ -146,7 +188,7 @@
                     hidden
                 />
 
-                <!-- PREVIEW IMAGE -->
+                <!-- PREVIEW -->
 
                 <img
                     id="previewImage"
@@ -164,7 +206,9 @@
                 <!-- BUTTON -->
 
                 <button id="analyzeBtn">
+
                     Analyze Nutrition
+
                 </button>
 
                 <!-- RESULT -->
@@ -174,39 +218,53 @@
                     class="result-card"
                     style="display:none;"
                 >
+
                     <h2 id="foodTitle">
+
                         Food
+
                     </h2>
 
                     <div class="calorie-circle">
+
                         <h1 id="foodCalories">
                             0
                         </h1>
 
                         <span>kcal</span>
+
                     </div>
 
                     <div class="macro-grid">
 
                         <div class="macro-box">
+
                             <p>💪 Protein</p>
+
                             <h3 id="protein">
                                 0g
                             </h3>
+
                         </div>
 
                         <div class="macro-box">
+
                             <p>⚡ Carbs</p>
+
                             <h3 id="carbs">
                                 0g
                             </h3>
+
                         </div>
 
                         <div class="macro-box">
+
                             <p>🥑 Fat</p>
+
                             <h3 id="fat">
                                 0g
                             </h3>
+
                         </div>
 
                     </div>
@@ -226,7 +284,9 @@
                 <div id="recentMeals">
 
                     <div class="recent-item">
+
                         No recent meals yet
+
                     </div>
 
                 </div>
@@ -240,4 +300,5 @@
     <script src="script.js"></script>
 
 </body>
+
 </html>
