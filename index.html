@@ -1,13 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>NutriVision AI</title>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
 <body>
 
+    <!-- NAVBAR -->
+
     <nav class="navbar">
-        <div class="logo">🍽 NutriVision AI</div>
+
+        <div class="logo">
+            🍽 NutriVision AI
+        </div>
 
         <div class="nav-right">
             <span id="userName">Guest</span>
-            <button class="logout-btn" id="logoutBtn">Logout</button>
+
+            <button class="logout-btn" id="logoutBtn">
+                Logout
+            </button>
         </div>
+
     </nav>
+
+    <!-- MAIN -->
 
     <div class="main-container">
 
@@ -15,16 +38,29 @@
 
         <div class="glass-card dashboard">
 
-            <h1 class="dashboard-title">🔥 Daily Dashboard</h1>
+            <h1 class="dashboard-title">
+                🔥 Daily Dashboard
+            </h1>
 
             <div class="dashboard-grid">
 
+                <!-- PROGRESS RING -->
+
                 <div class="progress-ring">
+
                     <div class="progress-inner">
-                        <h1 id="caloriesConsumed">0</h1>
+
+                        <h1 id="caloriesConsumed">
+                            0
+                        </h1>
+
                         <span>kcal</span>
+
                     </div>
+
                 </div>
+
+                <!-- STATS -->
 
                 <div>
 
@@ -52,8 +88,15 @@
 
                     </div>
 
+                    <!-- PROGRESS BAR -->
+
                     <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
+
+                        <div
+                            class="progress-fill"
+                            id="progressFill">
+                        </div>
+
                     </div>
 
                 </div>
@@ -62,61 +105,87 @@
 
         </div>
 
-        <!-- CONTENT -->
+        <!-- CONTENT GRID -->
 
         <div class="content-grid">
 
-            <!-- ANALYSIS -->
+            <!-- ANALYSIS CARD -->
 
             <div class="glass-card analysis-card">
 
-                <h1>Smart Nutrition Analysis</h1>
+                <h1>
+                    Smart Nutrition Analysis
+                </h1>
 
                 <p>
                     Upload food images and estimate calories instantly with AI
                 </p>
 
-                <label for="imageInput" class="upload-box">
+                <!-- IMAGE UPLOAD -->
+
+                <label
+                    for="imageInput"
+                    class="upload-box">
+
                     📸 Upload Food Image
+
                 </label>
 
                 <input
                     type="file"
                     id="imageInput"
+                    accept="image/*"
                     hidden
-                >
+                />
+
+                <!-- PREVIEW -->
 
                 <img
                     id="previewImage"
                     class="food-preview"
                     style="display:none;"
-                >
+                />
+
+                <!-- FOOD INPUT -->
 
                 <input
                     type="text"
                     id="foodInput"
                     class="food-input"
                     placeholder="Describe your food..."
-                >
+                />
+
+                <!-- BUTTON -->
 
                 <button
                     class="analyze-btn"
-                    id="analyzeBtn"
-                >
+                    id="analyzeBtn">
+
                     Analyze Nutrition
+
                 </button>
+
+                <!-- RESULT -->
 
                 <div id="result"></div>
 
             </div>
 
-            <!-- RECENT -->
+            <!-- RECENT ANALYSIS -->
 
             <div class="glass-card recent-card">
 
-                <h2>📊 Recent Analysis</h2>
+                <h2>
+                    📊 Recent Analysis
+                </h2>
 
-                <div id="recentList"></div>
+                <div id="recentList">
+
+                    <div class="recent-item">
+                        No recent meals yet
+                    </div>
+
+                </div>
 
             </div>
 
@@ -124,6 +193,10 @@
 
     </div>
 
+    <!-- SCRIPT -->
+
     <script type="module" src="script.js"></script>
 
 </body>
+
+</html>
