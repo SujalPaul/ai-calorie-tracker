@@ -339,3 +339,130 @@ function updateDashboard() {
       `${progress}%`;
 
 }
+// CALORIE CHART
+
+const calorieCtx = document
+.getElementById("calorieChart");
+
+new Chart(calorieCtx, {
+    type: "bar",
+
+    data: {
+        labels: [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+        ],
+
+        datasets: [{
+            label: "Calories",
+
+            data: [
+                1800,
+                2200,
+                1900,
+                2500,
+                1700,
+                2100,
+                1500
+            ],
+
+            borderRadius: 12,
+
+            backgroundColor: [
+                "#ff00cc",
+                "#c026d3",
+                "#9333ea",
+                "#7c3aed",
+                "#6366f1",
+                "#3b82f6",
+                "#2563eb"
+            ]
+        }]
+    },
+
+    options: {
+        responsive: true,
+
+        plugins: {
+            legend: {
+                labels: {
+                    color: "white"
+                }
+            }
+        },
+
+        scales: {
+            y: {
+                ticks: {
+                    color: "white"
+                },
+
+                grid: {
+                    color: "rgba(255,255,255,0.05)"
+                }
+            },
+
+            x: {
+                ticks: {
+                    color: "white"
+                },
+
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// MACRO CHART
+
+const macroCtx = document
+.getElementById("macroChart");
+
+new Chart(macroCtx, {
+
+    type: "doughnut",
+
+    data: {
+        labels: [
+            "Protein",
+            "Carbs",
+            "Fat"
+        ],
+
+        datasets: [{
+            data: [
+                30,
+                50,
+                20
+            ],
+
+            backgroundColor: [
+                "#ff00cc",
+                "#7c3aed",
+                "#3b82f6"
+            ],
+
+            borderWidth: 0
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+            legend: {
+                labels: {
+                    color: "white"
+                }
+            }
+        }
+    }
+});
