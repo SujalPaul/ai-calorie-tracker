@@ -55,6 +55,8 @@ let totalFat = 0;
 
 /* IMAGE PREVIEW */
 
+let uploadedBase64 = "";
+
 foodImageInput.addEventListener("change", (e) => {
 
     const file = e.target.files[0];
@@ -70,6 +72,10 @@ foodImageInput.addEventListener("change", (e) => {
 
         previewImage.style.display =
         "block";
+
+        uploadedBase64 =
+        event.target.result
+        .split(",")[1];
     };
 
     reader.readAsDataURL(file);
