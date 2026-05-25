@@ -1,76 +1,383 @@
-export default async function handler(req, res) {
-  try {
-    const { food } = req.body;
+const foodImageInput =
+document.getElementById("foodImage");
 
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+const previewImage =
+document.getElementById("previewImage");
+
+const analyzeBtn =
+document.getElementById("analyzeBtn");
+
+const resultCard =
+document.getElementById("resultCard");
+
+const foodTitle =
+document.getElementById("foodTitle");
+
+const foodCalories =
+document.getElementById("foodCalories");
+
+const protein =
+document.getElementById("protein");
+
+const carbs =
+document.getElementById("carbs");
+
+const fat =
+document.getElementById("fat");
+
+const totalCalories =
+document.getElementById("totalCalories");
+
+const mealCount =
+document.getElementById("mealCount");
+
+const remainingCalories =
+document.getElementById("remainingCalories");
+
+const progressPercent =
+document.getElementById("progressPercent");
+
+const progressFill =
+document.getElementById("progressFill");
+
+const recentMeals =
+document.getElementById("recentMeals");
+
+/* TOTALS */
+
+let currentCalories = 0;
+
+let meals = 0;
+
+let totalProtein = 0;
+let totalCarbs = 0;
+let totalFat = 0;
+
+/* IMAGE PREVIEW */
+
+foodImageInput.addEventListener("change", (e) => {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = function(event){
+
+        previewImage.src =
+        event.target.result;
+
+        previewImage.style.display =
+        "block";
+    };
+
+    reader.readAsDataURL(file);
+
+});
+
+/* CALORIE CHART */
+
+const calorieCtx =
+document
+.getElementById("calorieChart")
+.getContext("2d");
+
+const calorieChart =
+new Chart(calorieCtx, {
+
+    type: "line",
+
+    data: {
+
+        labels: [],
+
+        datasets: [{
+
+            label: "Calories",
+
+            data: [],
+
+            borderColor: "#7c4dff",
+
+            backgroundColor:
+            "rgba(124,77,255,0.2)",
+
+            tension: 0.4,
+
+            fill: true,
+
+            pointRadius: 5,
+
+            pointBackgroundColor:
+            "#ff00c8"
+
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+
+                labels: {
+
+                    color: "white"
+                }
+            }
         },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
 
-          messages: [
-            {
-              role: "system",
-              content: `
-You are a nutrition AI.
+        scales: {
 
-Return ONLY valid JSON.
+            x: {
 
-Example:
-{
-  "name": "Pizza",
-  "calories": 300,
-  "protein": 12,
-  "carbs": 35,
-  "fat": 10
-}
-              `,
+                ticks: {
+
+                    color: "white"
+                },
+
+                grid: {
+
+                    color:
+                    "rgba(255,255,255,0.05)"
+                }
             },
-            {
-              role: "user",
-              content: `Food: ${food}`,
-            },
-          ],
 
-          temperature: 0.3,
-          max_tokens: 200,
-        }),
-      }
-    );
+            y: {
 
-    const data = await response.json();
+                ticks: {
 
-    console.log(data);
+                    color: "white"
+                },
 
-    const content = data.choices?.[0]?.message?.content;
+                grid: {
 
-    if (!content) {
-      return res.status(500).json({
-        error: "No response from AI",
-      });
+                    color:
+                    "rgba(255,255,255,0.05)"
+                }
+            }
+        }
+    }
+});
+
+/* MACRO CHART */
+
+const macroCtx =
+document
+.getElementById("macroChart")
+.getContext("2d");
+
+const macroChart =
+new Chart(macroCtx, {
+
+    type: "doughnut",
+
+    data: {
+
+        labels: [
+            "Protein",
+            "Carbs",
+            "Fat"
+        ],
+
+        datasets: [{
+
+            data: [0,0,0],
+
+            backgroundColor: [
+
+                "#ff00c8",
+                "#7c4dff",
+                "#2563eb"
+            ],
+
+            borderWidth: 0
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+
+                labels: {
+
+                    color: "white"
+                }
+            }
+        }
+    }
+});
+
+/* ANALYZE WITH GEMINI AI */
+
+analyzeBtn.addEventListener("click", async () => {
+
+    const food =
+    document
+    .getElementById("foodInput")
+    .value;
+
+    if(food.trim() === ""){
+
+        alert("Please enter food name");
+
+        return;
     }
 
-    let nutrition;
+    analyzeBtn.innerText =
+    "Analyzing...";
 
-    try {
-      nutrition = JSON.parse(content);
-    } catch {
-      return res.status(500).json({
-        error: "Invalid AI response",
-      });
+    analyzeBtn.disabled = true;
+
+    try{
+
+        const response =
+        await fetch("/api/analyze-food", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+                food
+            })
+        });
+
+        const data =
+        await response.json();
+
+        const calories =
+        Number(data.calories);
+
+        const proteinValue =
+        Number(data.protein);
+
+        const carbsValue =
+        Number(data.carbs);
+
+        const fatValue =
+        Number(data.fat);
+
+        /* SHOW RESULT */
+
+        resultCard.style.display =
+        "block";
+
+        foodTitle.innerText =
+        data.name || food;
+
+        foodCalories.innerText =
+        calories;
+
+        protein.innerText =
+        proteinValue + "g";
+
+        carbs.innerText =
+        carbsValue + "g";
+
+        fat.innerText =
+        fatValue + "g";
+
+        /* UPDATE TOTALS */
+
+        currentCalories += calories;
+
+        meals++;
+
+        totalProtein += proteinValue;
+
+        totalCarbs += carbsValue;
+
+        totalFat += fatValue;
+
+        /* DASHBOARD */
+
+        totalCalories.innerText =
+        currentCalories;
+
+        mealCount.innerText =
+        meals;
+
+        remainingCalories.innerText =
+        Math.max(
+            2000 - currentCalories,
+            0
+        );
+
+        const progress =
+        Math.min(
+            (currentCalories / 2000) * 100,
+            100
+        );
+
+        progressPercent.innerText =
+        progress.toFixed(0) + "%";
+
+        progressFill.style.width =
+        progress + "%";
+
+        /* RECENT MEALS */
+
+        const item =
+        document.createElement("div");
+
+        item.className =
+        "recent-item";
+
+        item.innerHTML = `
+            🍜 ${data.name}
+            <br>
+            ${calories} kcal
+        `;
+
+        recentMeals.prepend(item);
+
+        /* UPDATE CALORIE CHART */
+
+        calorieChart.data.labels.push(
+            "Meal " + meals
+        );
+
+        calorieChart.data.datasets[0].data.push(
+            calories
+        );
+
+        calorieChart.update();
+
+        /* UPDATE MACRO CHART */
+
+        macroChart.data.datasets[0].data = [
+
+            totalProtein,
+            totalCarbs,
+            totalFat
+        ];
+
+        macroChart.update();
+
     }
 
-    res.status(200).json(nutrition);
-  } catch (error) {
-    console.log(error);
+    catch(error){
 
-    res.status(500).json({
-      error: "Server error",
-    });
-  }
-}
+        console.log(error);
+
+        alert("AI analysis failed");
+
+    }
+
+    analyzeBtn.innerText =
+    "Analyze Nutrition";
+
+    analyzeBtn.disabled = false;
+
+});
