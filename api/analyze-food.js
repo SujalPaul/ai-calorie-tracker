@@ -14,35 +14,39 @@ export default async function handler(req, res) {
         const GEMINI_API_KEY =
         process.env.GEMINI_API_KEY;
 
+        const prompt = `
+        Analyze this food.
+
+        Return ONLY valid JSON.
+
+        Format:
+
+        {
+          "name": "",
+          "calories": 0,
+          "protein": 0,
+          "carbs": 0,
+          "fat": 0
+        }
+        `;
+
         let parts = [];
 
         /* IMAGE MODE */
 
-        if (image) {
+        if(image){
 
             parts = [
 
                 {
-                    text: `
-                    Identify the food in this image.
-
-                    Return ONLY valid JSON.
-
-                    Example:
-
-                    {
-                      "name": "Pizza",
-                      "calories": 300,
-                      "protein": 12,
-                      "carbs": 35,
-                      "fat": 10
-                    }
-                    `
+                    text: prompt
                 },
 
                 {
-                    inline_data: {
-                        mime_type: "image/jpeg",
+                    inlineData: {
+
+                        mimeType: "image/jpeg",
+
                         data: image
                     }
                 }
@@ -51,35 +55,21 @@ export default async function handler(req, res) {
 
         /* TEXT MODE */
 
-        else {
+        else{
 
             parts = [
 
                 {
-                    text: `
-                    Analyze this food:
-
-                    ${food}
-
-                    Return ONLY valid JSON.
-
-                    Example:
-
-                    {
-                      "name": "Burger",
-                      "calories": 450,
-                      "protein": 20,
-                      "carbs": 40,
-                      "fat": 18
-                    }
-                    `
+                    text:
+                    prompt + "\nFood: " + food
                 }
             ];
         }
 
-        const response = await fetch(
+        const response =
+        await fetch(
 
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
 
             {
 
@@ -93,7 +83,10 @@ export default async function handler(req, res) {
                 body: JSON.stringify({
 
                     contents: [
+
                         {
+                            role: "user",
+
                             parts
                         }
                     ]
@@ -104,21 +97,22 @@ export default async function handler(req, res) {
         const data =
         await response.json();
 
-        console.log(data);
+        console.log(JSON.stringify(data));
 
         const text =
         data?.candidates?.[0]
         ?.content?.parts?.[0]
         ?.text;
 
-        if (!text) {
+        if(!text){
 
             return res.status(500).json({
-                error: "No AI response"
+
+                error:
+                data?.error?.message ||
+                "No AI response"
             });
         }
-
-        /* CLEAN JSON */
 
         const cleanText =
         text
@@ -128,18 +122,20 @@ export default async function handler(req, res) {
 
         let nutrition;
 
-        try {
+        try{
 
             nutrition =
             JSON.parse(cleanText);
 
         }
 
-        catch {
+        catch{
 
             return res.status(500).json({
+
                 error:
-                "AI returned invalid JSON",
+                "Invalid AI JSON",
+
                 raw: cleanText
             });
         }
@@ -148,12 +144,14 @@ export default async function handler(req, res) {
 
     }
 
-    catch (error) {
+    catch(error){
 
         console.log(error);
 
         res.status(500).json({
-            error: "AI analysis failed"
+
+            error:
+            "AI analysis failed"
         });
     }
 }
