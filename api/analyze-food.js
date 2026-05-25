@@ -9,19 +9,16 @@ export default async function handler(req, res) {
 
     try {
 
-        const {
-            food,
-            image
-        } = req.body;
+        const { food, image } = req.body;
 
         const GEMINI_API_KEY =
         process.env.GEMINI_API_KEY;
 
         let parts = [];
 
-        // IMAGE MODE
+        /* IMAGE MODE */
 
-        if(image){
+        if (image) {
 
             parts = [
 
@@ -29,14 +26,16 @@ export default async function handler(req, res) {
                     text: `
                     Identify the food in this image.
 
-                    Return ONLY valid JSON:
+                    Return ONLY valid JSON.
+
+                    Example:
 
                     {
-                      "name": "",
-                      "calories": 0,
-                      "protein": 0,
-                      "carbs": 0,
-                      "fat": 0
+                      "name": "Pizza",
+                      "calories": 300,
+                      "protein": 12,
+                      "carbs": 35,
+                      "fat": 10
                     }
                     `
                 },
@@ -50,25 +49,28 @@ export default async function handler(req, res) {
             ];
         }
 
-        // TEXT MODE
+        /* TEXT MODE */
 
-        else{
+        else {
 
             parts = [
 
                 {
                     text: `
                     Analyze this food:
+
                     ${food}
 
-                    Return ONLY valid JSON:
+                    Return ONLY valid JSON.
+
+                    Example:
 
                     {
-                      "name": "",
-                      "calories": 0,
-                      "protein": 0,
-                      "carbs": 0,
-                      "fat": 0
+                      "name": "Burger",
+                      "calories": 450,
+                      "protein": 20,
+                      "carbs": 40,
+                      "fat": 18
                     }
                     `
                 }
@@ -91,7 +93,6 @@ export default async function handler(req, res) {
                 body: JSON.stringify({
 
                     contents: [
-
                         {
                             parts
                         }
@@ -103,24 +104,51 @@ export default async function handler(req, res) {
         const data =
         await response.json();
 
+        console.log(data);
+
         const text =
-        data.candidates[0]
-        .content.parts[0]
-        .text;
+        data?.candidates?.[0]
+        ?.content?.parts?.[0]
+        ?.text;
+
+        if (!text) {
+
+            return res.status(500).json({
+                error: "No AI response"
+            });
+        }
+
+        /* CLEAN JSON */
 
         const cleanText =
         text
         .replace(/```json/g, "")
-        .replace(/```/g, "");
+        .replace(/```/g, "")
+        .trim();
 
-        const nutrition =
-        JSON.parse(cleanText);
+        let nutrition;
+
+        try {
+
+            nutrition =
+            JSON.parse(cleanText);
+
+        }
+
+        catch {
+
+            return res.status(500).json({
+                error:
+                "AI returned invalid JSON",
+                raw: cleanText
+            });
+        }
 
         res.status(200).json(nutrition);
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.log(error);
 
