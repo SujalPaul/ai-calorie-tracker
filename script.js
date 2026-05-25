@@ -53,9 +53,11 @@ let totalProtein = 0;
 let totalCarbs = 0;
 let totalFat = 0;
 
-/* IMAGE PREVIEW */
+/* IMAGE STORAGE */
 
 let uploadedBase64 = "";
+
+/* IMAGE PREVIEW */
 
 foodImageInput.addEventListener("change", (e) => {
 
@@ -223,126 +225,188 @@ new Chart(macroCtx, {
 
 /* ANALYZE */
 
-analyzeBtn.addEventListener("click", () => {
+analyzeBtn.addEventListener("click", async () => {
 
     const food =
     document
     .getElementById("foodInput")
     .value;
 
-    if(food.trim() === ""){
+    if(
+        food.trim() === "" &&
+        uploadedBase64 === ""
+    ){
 
-        alert("Please enter food name");
+        alert(
+            "Upload image or enter food name"
+        );
 
         return;
     }
 
-    /* RANDOM AI VALUES */
+    analyzeBtn.innerText =
+    "Analyzing...";
 
-    const calories =
-    Math.floor(Math.random()*400)+100;
+    analyzeBtn.disabled = true;
 
-    const proteinValue =
-    Math.floor(Math.random()*30)+5;
+    try{
 
-    const carbsValue =
-    Math.floor(Math.random()*50)+10;
+        const response =
+        await fetch("/api/analyze-food", {
 
-    const fatValue =
-    Math.floor(Math.random()*20)+3;
+            method: "POST",
 
-    /* SHOW RESULT */
+            headers: {
+                "Content-Type":
+                "application/json"
+            },
 
-    resultCard.style.display =
-    "block";
+            body: JSON.stringify({
 
-    foodTitle.innerText =
-    food;
+                food,
 
-    foodCalories.innerText =
-    calories;
+                image: uploadedBase64
+            })
+        });
 
-    protein.innerText =
-    proteinValue + "g";
+        const data =
+        await response.json();
 
-    carbs.innerText =
-    carbsValue + "g";
+        if(data.error){
 
-    fat.innerText =
-    fatValue + "g";
+            alert(data.error);
 
-    /* UPDATE TOTALS */
+            analyzeBtn.innerText =
+            "Analyze Nutrition";
 
-    currentCalories += calories;
+            analyzeBtn.disabled =
+            false;
 
-    meals++;
+            return;
+        }
 
-    totalProtein += proteinValue;
+        const calories =
+        Number(data.calories);
 
-    totalCarbs += carbsValue;
+        const proteinValue =
+        Number(data.protein);
 
-    totalFat += fatValue;
+        const carbsValue =
+        Number(data.carbs);
 
-    /* DASHBOARD */
+        const fatValue =
+        Number(data.fat);
 
-    totalCalories.innerText =
-    currentCalories;
+        /* SHOW RESULT */
 
-    mealCount.innerText =
-    meals;
+        resultCard.style.display =
+        "block";
 
-    remainingCalories.innerText =
-    2000 - currentCalories;
+        foodTitle.innerText =
+        data.name || food;
 
-    const progress =
-    Math.min(
-        (currentCalories / 2000) * 100,
-        100
-    );
+        foodCalories.innerText =
+        calories;
 
-    progressPercent.innerText =
-    progress.toFixed(0) + "%";
+        protein.innerText =
+        proteinValue + "g";
 
-    progressFill.style.width =
-    progress + "%";
+        carbs.innerText =
+        carbsValue + "g";
 
-    /* RECENT MEALS */
+        fat.innerText =
+        fatValue + "g";
 
-    const item =
-    document.createElement("div");
+        /* UPDATE TOTALS */
 
-    item.className =
-    "recent-item";
+        currentCalories += calories;
 
-    item.innerHTML = `
-        🍜 ${food}
-        <br>
-        ${calories} kcal
-    `;
+        meals++;
 
-    recentMeals.prepend(item);
+        totalProtein += proteinValue;
 
-    /* UPDATE CALORIE CHART */
+        totalCarbs += carbsValue;
 
-    calorieChart.data.labels.push(
-        "Meal " + meals
-    );
+        totalFat += fatValue;
 
-    calorieChart.data.datasets[0].data.push(
-        calories
-    );
+        /* DASHBOARD */
 
-    calorieChart.update();
+        totalCalories.innerText =
+        currentCalories;
 
-    /* UPDATE MACRO CHART */
+        mealCount.innerText =
+        meals;
 
-    macroChart.data.datasets[0].data = [
+        remainingCalories.innerText =
+        Math.max(
+            2000 - currentCalories,
+            0
+        );
 
-        totalProtein,
-        totalCarbs,
-        totalFat
-    ];
+        const progress =
+        Math.min(
+            (currentCalories / 2000) * 100,
+            100
+        );
 
-    macroChart.update();
+        progressPercent.innerText =
+        progress.toFixed(0) + "%";
+
+        progressFill.style.width =
+        progress + "%";
+
+        /* RECENT */
+
+        const item =
+        document.createElement("div");
+
+        item.className =
+        "recent-item";
+
+        item.innerHTML = `
+            🍜 ${data.name}
+            <br>
+            ${calories} kcal
+        `;
+
+        recentMeals.prepend(item);
+
+        /* CALORIE CHART */
+
+        calorieChart.data.labels.push(
+            "Meal " + meals
+        );
+
+        calorieChart.data.datasets[0].data.push(
+            calories
+        );
+
+        calorieChart.update();
+
+        /* MACRO CHART */
+
+        macroChart.data.datasets[0].data = [
+
+            totalProtein,
+            totalCarbs,
+            totalFat
+        ];
+
+        macroChart.update();
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        alert("AI analysis failed");
+
+    }
+
+    analyzeBtn.innerText =
+    "Analyze Nutrition";
+
+    analyzeBtn.disabled = false;
 
 });
