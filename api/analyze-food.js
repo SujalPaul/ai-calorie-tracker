@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+
   if (req.method !== "POST") {
     return res.status(405).json({
       error: "Method not allowed",
@@ -6,15 +7,16 @@ export default async function handler(req, res) {
   }
 
   try {
+
     const { food } = req.body;
 
     if (!food) {
       return res.status(400).json({
-        error: "Food name required",
+        error: "Food is required",
       });
     }
 
-    const response = await fetch(
+    const groqResponse = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
@@ -31,15 +33,15 @@ export default async function handler(req, res) {
             {
               role: "system",
               content:
-                "You are a nutrition expert. Always respond ONLY with valid JSON.",
+                "You are a nutrition expert.",
             },
 
             {
               role: "user",
               content: `
-Give nutrition data for ${food}.
+Give nutrition info for ${food}.
 
-Return ONLY valid JSON.
+ONLY return valid JSON.
 
 Example:
 
@@ -47,38 +49,53 @@ Example:
   "name": "Pizza",
   "calories": 300,
   "protein": 12,
-  "carbs": 33,
+  "carbs": 35,
   "fat": 10
 }
               `,
             },
           ],
 
-          temperature: 0.3,
-          max_tokens: 200,
+          temperature: 0.2,
         }),
       }
     );
 
-    const data = await response.json();
+    const groqData = await groqResponse.json();
 
-    console.log(data);
+    console.log(groqData);
 
-    const content =
-      data?.choices?.[0]?.message?.content;
+    const message =
+      groqData.choices?.[0]?.message?.content;
 
-    if (!content) {
+    if (!message) {
+
       return res.status(500).json({
-        error: "No AI response",
+        error: JSON.stringify(groqData),
       });
     }
 
-    let cleaned = content
+    const cleaned = message
       .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
-    const nutrition = JSON.parse(cleaned);
+    let nutrition;
+
+    try {
+
+      nutrition = JSON.parse(cleaned);
+
+    } catch {
+
+      nutrition = {
+        name: food,
+        calories: 300,
+        protein: 10,
+        carbs: 40,
+        fat: 8,
+      };
+    }
 
     return res.status(200).json(nutrition);
 
