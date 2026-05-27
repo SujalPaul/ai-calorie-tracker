@@ -59,6 +59,8 @@ let uploadedBase64 = "";
 
 /* IMAGE PREVIEW */
 
+let uploadedBase64 = "";
+
 foodImageInput.addEventListener("change", (e) => {
 
     const file = e.target.files[0];
@@ -69,15 +71,62 @@ foodImageInput.addEventListener("change", (e) => {
 
     reader.onload = function(event){
 
-        previewImage.src =
+        const img = new Image();
+
+        img.onload = function(){
+
+            const canvas =
+            document.createElement("canvas");
+
+            const MAX_WIDTH = 512;
+
+            const scaleSize =
+            MAX_WIDTH / img.width;
+
+            canvas.width = MAX_WIDTH;
+
+            canvas.height =
+            img.height * scaleSize;
+
+            const ctx =
+            canvas.getContext("2d");
+
+            ctx.drawImage(
+
+                img,
+
+                0,
+                0,
+
+                canvas.width,
+                canvas.height
+            );
+
+            const compressedBase64 =
+            canvas.toDataURL(
+
+                "image/jpeg",
+
+                0.6
+            );
+
+            previewImage.src =
+            compressedBase64;
+
+            previewImage.style.display =
+            "block";
+
+            uploadedBase64 =
+            compressedBase64
+            .split(",")[1];
+
+            console.log(
+                "Compressed image ready"
+            );
+        };
+
+        img.src =
         event.target.result;
-
-        previewImage.style.display =
-        "block";
-
-        uploadedBase64 =
-        event.target.result
-        .split(",")[1];
     };
 
     reader.readAsDataURL(file);
