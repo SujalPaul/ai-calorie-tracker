@@ -155,109 +155,102 @@
 
 
 
-        <!-- ANALYSIS SECTION -->
+       <!-- ANALYSIS GRID -->
 
-        <div class="analysis-grid">
+<div class="analysis-grid">
 
+    <!-- LEFT SIDE -->
 
-            <!-- LEFT -->
+    <section class="analysis-card glass-card">
 
-            <section class="analysis-card glass-card">
+        <h1>
+            Smart Nutrition Analysis
+        </h1>
 
-                <h1>
-                    Smart Nutrition Analysis
-                </h1>
+        <p>
+            Upload food images and estimate calories instantly with AI
+        </p>
 
-                <p>
-                    Upload food images and estimate calories instantly with AI
-                </p>
+        <div class="upload-section">
 
+            <!-- UPLOAD BUTTON -->
 
-                <!-- FILE INPUT -->
+            <label
+                for="foodImage"
+                class="upload-box"
+            >
 
-                <label
-                    for="foodImage"
-                    class="upload-box"
-                >
+                📸 Upload Food Image
 
-                    📸 Upload Food Image
+            </label>
 
-                </label>
+            <!-- FILE INPUT -->
 
-                <input
-                    type="file"
-                    id="foodImage"
-                    accept="image/*"
-                    hidden
-                />
+            <input
+                type="file"
+                id="foodImage"
+                accept="image/*"
+                hidden
+            >
 
+            <!-- IMAGE PREVIEW -->
 
-                <!-- PREVIEW IMAGE -->
+            <img
+                id="previewImage"
+                style="
+                    display:none;
+                    width:100%;
+                    border-radius:20px;
+                "
+            >
 
-                <img
-                    id="previewImage"
-                    style="
-                        display:none;
-                        width:100%;
-                        margin-top:20px;
-                        border-radius:20px;
-                    "
-                />
+            <!-- DESCRIPTION -->
 
+            <textarea
+                id="foodDescription"
+                placeholder="Describe your food..."
+            ></textarea>
 
-                <!-- DESCRIPTION -->
+            <!-- BUTTON -->
 
-                <textarea
-                    id="foodDescription"
-                    placeholder="Describe your food..."
-                ></textarea>
+            <button id="analyzeBtn">
 
+                Analyze Nutrition
 
-                <!-- ANALYZE BUTTON -->
-
-                <button id="analyzeBtn">
-
-                    Analyze Nutrition
-
-                </button>
-
-
-                <!-- RESULT -->
-
-                <div id="resultContainer">
-
-                </div>
-
-            </section>
-
-
-
-            <!-- RIGHT -->
-
-            <section class="recent-card glass-card">
-
-                <h2>
-                    📊 Recent Analysis
-                </h2>
-
-                <div id="recentAnalysis">
-
-                    <div class="recent-meal">
-
-                        No recent meals yet
-
-                    </div>
-
-                </div>
-
-            </section>
+            </button>
 
         </div>
 
-    </div>
+        <!-- RESULTS -->
+
+        <div id="resultContainer">
+
+        </div>
+
+    </section>
 
 
+    <!-- RIGHT SIDE -->
 
+    <section class="recent-card glass-card">
+
+        <h2>
+            📊 Recent Analysis
+        </h2>
+
+        <div id="recentAnalysis">
+
+            <div class="recent-meal">
+
+                No recent meals yet
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
     <!-- CHART JS -->
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js">
