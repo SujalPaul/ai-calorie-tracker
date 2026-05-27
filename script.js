@@ -1,10 +1,10 @@
-const foodImageInput =
+const foodImage =
 document.getElementById("foodImage");
 
 const previewImage =
 document.getElementById("previewImage");
 
-const foodDescription =
+const foodInput =
 document.getElementById("foodDescription");
 
 const analyzeBtn =
@@ -28,18 +28,18 @@ document.getElementById("progressValue");
 const recentAnalysis =
 document.getElementById("recentAnalysis");
 
+const progressFill =
+document.querySelector(".progress-fill");
+
+/* TOTALS */
+
 let totalCalories = 0;
 
-let meals = 0;
+let totalMeals = 0;
 
-const goalCalories = 2000;
+/* IMAGE PREVIEW */
 
-let uploadedBase64 = "";
-
-
-/* IMAGE UPLOAD */
-
-foodImageInput.addEventListener("change", (e) => {
+foodImage.addEventListener("change", (e) => {
 
     const file = e.target.files[0];
 
@@ -47,82 +47,28 @@ foodImageInput.addEventListener("change", (e) => {
 
     const reader = new FileReader();
 
-    reader.onload = (event) => {
+    reader.onload = function(event) {
 
-        const img = new Image();
-
-        img.onload = () => {
-
-            const canvas =
-            document.createElement("canvas");
-
-            const ctx =
-            canvas.getContext("2d");
-
-            const MAX_WIDTH = 512;
-
-            let width = img.width;
-            let height = img.height;
-
-            if (width > MAX_WIDTH) {
-
-                height =
-                height * (MAX_WIDTH / width);
-
-                width = MAX_WIDTH;
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-
-            ctx.drawImage(
-
-                img,
-
-                0,
-                0,
-
-                width,
-                height
-            );
-
-            const compressedImage =
-            canvas.toDataURL(
-
-                "image/jpeg",
-
-                0.7
-            );
-
-            previewImage.src =
-            compressedImage;
-
-            previewImage.style.display =
-            "block";
-
-            uploadedBase64 =
-            compressedImage.split(",")[1];
-
-            console.log(
-                "Compressed image ready"
-            );
-        };
-
-        img.src =
+        previewImage.src =
         event.target.result;
+
+        previewImage.style.display =
+        "block";
     };
 
     reader.readAsDataURL(file);
 });
 
-
 /* ANALYZE FOOD */
 
 analyzeBtn.addEventListener("click", async () => {
 
-    if (!uploadedBase64) {
+    const food =
+    foodInput.value.trim();
 
-        alert("Please upload image");
+    if (!food) {
+
+        alert("Please enter food name");
 
         return;
     }
@@ -130,171 +76,172 @@ analyzeBtn.addEventListener("click", async () => {
     analyzeBtn.innerText =
     "Analyzing...";
 
+    analyzeBtn.disabled = true;
+
     try {
 
         const response =
-        await fetch(
+        await fetch("/api/analyze-food", {
 
-            "/api/analyze-food",
+            method: "POST",
 
-            {
+            headers: {
+                "Content-Type":
+                "application/json"
+            },
 
-                method: "POST",
-
-                headers: {
-
-                    "Content-Type":
-                    "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    image: uploadedBase64,
-
-                    description:
-                    foodDescription.value
-                })
-            }
-        );
-
-        console.log(response);
+            body: JSON.stringify({
+                food
+            })
+        });
 
         const data =
         await response.json();
 
         console.log(data);
 
-        if (!data.success) {
+        if (data.error) {
 
             alert(data.error);
 
             analyzeBtn.innerText =
             "Analyze Nutrition";
 
+            analyzeBtn.disabled =
+            false;
+
             return;
         }
 
-        const nutrition =
-        data.result;
+        /* SHOW RESULT */
 
-        showResult(nutrition);
+        resultContainer.innerHTML = `
 
-        updateDashboard(nutrition);
+            <div class="result-card">
 
-        addRecentMeal(nutrition);
+                <h2>
+                    🍽 ${data.name}
+                </h2>
 
-        analyzeBtn.innerText =
-        "Analyze Nutrition";
+                <div class="nutrition-grid">
 
-    } catch (error) {
+                    <div class="nutrition-box">
+
+                        <h3>
+                            Calories
+                        </h3>
+
+                        <p>
+                            ${data.calories} kcal
+                        </p>
+
+                    </div>
+
+                    <div class="nutrition-box">
+
+                        <h3>
+                            Protein
+                        </h3>
+
+                        <p>
+                            ${data.protein}g
+                        </p>
+
+                    </div>
+
+                    <div class="nutrition-box">
+
+                        <h3>
+                            Carbs
+                        </h3>
+
+                        <p>
+                            ${data.carbs}g
+                        </p>
+
+                    </div>
+
+                    <div class="nutrition-box">
+
+                        <h3>
+                            Fat
+                        </h3>
+
+                        <p>
+                            ${data.fat}g
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+        /* UPDATE DASHBOARD */
+
+        totalCalories +=
+        Number(data.calories);
+
+        totalMeals++;
+
+        caloriesValue.innerText =
+        totalCalories;
+
+        mealsValue.innerText =
+        totalMeals;
+
+        remainingValue.innerText =
+        Math.max(
+            2000 - totalCalories,
+            0
+        );
+
+        const progress =
+        Math.min(
+            (totalCalories / 2000) * 100,
+            100
+        );
+
+        progressValue.innerText =
+        `${Math.round(progress)}%`;
+
+        progressFill.style.width =
+        `${progress}%`;
+
+        /* ADD RECENT MEAL */
+
+        const meal =
+        document.createElement("div");
+
+        meal.classList.add(
+            "recent-meal"
+        );
+
+        meal.innerHTML = `
+
+            <p>
+                🍱 ${data.name}
+            </p>
+
+            <span>
+                ${data.calories} kcal
+            </span>
+        `;
+
+        recentAnalysis.prepend(meal);
+
+    }
+
+    catch (error) {
 
         console.log(error);
 
-        alert(error.message);
-
-        analyzeBtn.innerText =
-        "Analyze Nutrition";
+        alert("Something went wrong");
     }
+
+    analyzeBtn.innerText =
+    "Analyze Nutrition";
+
+    analyzeBtn.disabled = false;
 });
-
-
-/* SHOW RESULT */
-
-function showResult(data) {
-
-    resultContainer.innerHTML = `
-
-    <div class="nutrition-card">
-
-        <h2>${data.food}</h2>
-
-        <div class="nutrition-circle">
-
-            <h1>${data.calories}</h1>
-
-            <p>kcal</p>
-
-        </div>
-
-        <div class="nutrition-grid">
-
-            <div class="nutrition-box">
-
-                <h3>Protein</h3>
-
-                <p>${data.protein}g</p>
-
-            </div>
-
-            <div class="nutrition-box">
-
-                <h3>Carbs</h3>
-
-                <p>${data.carbs}g</p>
-
-            </div>
-
-            <div class="nutrition-box">
-
-                <h3>Fat</h3>
-
-                <p>${data.fat}g</p>
-
-            </div>
-
-        </div>
-
-    </div>
-    `;
-}
-
-
-/* DASHBOARD */
-
-function updateDashboard(data) {
-
-    totalCalories +=
-    Number(data.calories);
-
-    meals++;
-
-    caloriesValue.innerText =
-    totalCalories;
-
-    mealsValue.innerText =
-    meals;
-
-    remainingValue.innerText =
-    goalCalories - totalCalories;
-
-    const progress =
-    Math.min(
-
-        (totalCalories / goalCalories) * 100,
-
-        100
-    );
-
-    progressValue.innerText =
-    `${Math.round(progress)}%`;
-}
-
-
-/* RECENT MEALS */
-
-function addRecentMeal(data) {
-
-    const meal =
-    document.createElement("div");
-
-    meal.classList.add("recent-meal");
-
-    meal.innerHTML = `
-
-        <p>🍱 ${data.food}</p>
-
-        <span>${data.calories} kcal</span>
-    `;
-
-    recentAnalysis.prepend(meal);
-}
