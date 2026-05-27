@@ -37,7 +37,7 @@ const goalCalories = 2000;
 let uploadedBase64 = "";
 
 
-/* IMAGE UPLOAD + COMPRESS */
+/* IMAGE UPLOAD */
 
 foodImageInput.addEventListener("change", (e) => {
 
@@ -122,7 +122,7 @@ analyzeBtn.addEventListener("click", async () => {
 
     if (!uploadedBase64) {
 
-        alert("Please upload a food image");
+        alert("Please upload image");
 
         return;
     }
@@ -133,24 +133,31 @@ analyzeBtn.addEventListener("click", async () => {
     try {
 
         const response =
-        await fetch("/api/analyze-food", {
+        await fetch(
 
-            method: "POST",
+            "/api/analyze-food",
 
-            headers: {
+            {
 
-                "Content-Type":
-                "application/json"
-            },
+                method: "POST",
 
-            body: JSON.stringify({
+                headers: {
 
-                image: uploadedBase64,
+                    "Content-Type":
+                    "application/json"
+                },
 
-                description:
-                foodDescription.value
-            })
-        });
+                body: JSON.stringify({
+
+                    image: uploadedBase64,
+
+                    description:
+                    foodDescription.value
+                })
+            }
+        );
+
+        console.log(response);
 
         const data =
         await response.json();
@@ -159,10 +166,7 @@ analyzeBtn.addEventListener("click", async () => {
 
         if (!data.success) {
 
-            alert(
-                data.error ||
-                "AI analysis failed"
-            );
+            alert(data.error);
 
             analyzeBtn.innerText =
             "Analyze Nutrition";
@@ -186,7 +190,7 @@ analyzeBtn.addEventListener("click", async () => {
 
         console.log(error);
 
-        alert("Something went wrong");
+        alert(error.message);
 
         analyzeBtn.innerText =
         "Analyze Nutrition";
@@ -245,11 +249,12 @@ function showResult(data) {
 }
 
 
-/* UPDATE DASHBOARD */
+/* DASHBOARD */
 
 function updateDashboard(data) {
 
-    totalCalories += Number(data.calories);
+    totalCalories +=
+    Number(data.calories);
 
     meals++;
 
