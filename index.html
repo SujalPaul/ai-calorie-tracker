@@ -12,16 +12,10 @@
 
     <title>NutriVision AI</title>
 
-    <link rel="stylesheet" href="style.css" />
-
     <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        href="style.css"
     />
-
-    <!-- CHART JS -->
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
@@ -31,55 +25,49 @@
 
     <nav class="navbar">
 
-        <div class="logo">
-
-            <i class="fa-solid fa-utensils"></i>
-
-            NutriVision AI
-
-        </div>
+        <h1 class="logo">
+            🍽 NutriVision AI
+        </h1>
 
         <div class="nav-right">
 
             <span>Guest</span>
 
             <button class="logout-btn">
-
                 Logout
-
             </button>
 
         </div>
 
     </nav>
 
-    <!-- MAIN -->
 
-    <main class="container">
+    <!-- MAIN CONTAINER -->
+
+    <div class="container">
+
 
         <!-- DASHBOARD -->
 
-        <section class="glass-card dashboard-card">
+        <section class="dashboard glass-card">
 
-            <h2>🔥 Daily Dashboard</h2>
+            <h2>
+                🔥 Daily Dashboard
+            </h2>
 
             <div class="dashboard-content">
 
-                <div class="circle-progress">
+                <div class="calorie-circle">
 
-                    <div class="circle-inner">
+                    <h1 id="caloriesValue">
+                        0
+                    </h1>
 
-                        <h1 id="totalCalories">
-                            0
-                        </h1>
-
-                        <p>kcal</p>
-
-                    </div>
+                    <p>kcal</p>
 
                 </div>
 
-                <div class="stats-grid">
+                <div class="dashboard-stats">
 
                     <div class="stat-box">
 
@@ -93,7 +81,7 @@
 
                         <p>🍽 Meals</p>
 
-                        <h3 id="mealCount">
+                        <h3 id="mealsValue">
                             0
                         </h3>
 
@@ -103,7 +91,7 @@
 
                         <p>⚡ Remaining</p>
 
-                        <h3 id="remainingCalories">
+                        <h3 id="remainingValue">
                             2000
                         </h3>
 
@@ -113,7 +101,7 @@
 
                         <p>🔥 Progress</p>
 
-                        <h3 id="progressPercent">
+                        <h3 id="progressValue">
                             0%
                         </h3>
 
@@ -125,44 +113,56 @@
 
             <div class="progress-bar">
 
-                <div
-                    class="progress-fill"
-                    id="progressFill"
-                ></div>
+                <div class="progress-fill">
+
+                </div>
 
             </div>
 
         </section>
+
+
 
         <!-- CHARTS -->
 
-        <section class="charts-grid">
+        <div class="charts-grid">
 
-            <div class="glass-card chart-card">
+            <div class="chart-card glass-card">
 
-                <h2>📈 Calories Overview</h2>
+                <h3>
+                    📈 Calories Overview
+                </h3>
 
-                <canvas id="calorieChart"></canvas>
+                <canvas id="caloriesChart">
 
-            </div>
-
-            <div class="glass-card chart-card">
-
-                <h2>🥗 Macro Split</h2>
-
-                <canvas id="macroChart"></canvas>
+                </canvas>
 
             </div>
 
-        </section>
+            <div class="chart-card glass-card">
 
-        <!-- BOTTOM -->
+                <h3>
+                    🥗 Macro Split
+                </h3>
 
-        <section class="bottom-grid">
+                <canvas id="macroChart">
 
-            <!-- ANALYSIS -->
+                </canvas>
 
-            <div class="glass-card analysis-card">
+            </div>
+
+        </div>
+
+
+
+        <!-- ANALYSIS SECTION -->
+
+        <div class="analysis-grid">
+
+
+            <!-- LEFT -->
+
+            <section class="analysis-card glass-card">
 
                 <h1>
                     Smart Nutrition Analysis
@@ -172,13 +172,16 @@
                     Upload food images and estimate calories instantly with AI
                 </p>
 
-                <!-- UPLOAD -->
+
+                <!-- FILE INPUT -->
 
                 <label
                     for="foodImage"
-                    class="upload-btn"
+                    class="upload-box"
                 >
+
                     📸 Upload Food Image
+
                 </label>
 
                 <input
@@ -188,22 +191,29 @@
                     hidden
                 />
 
-                <!-- PREVIEW -->
+
+                <!-- PREVIEW IMAGE -->
 
                 <img
                     id="previewImage"
-                    style="display:none;"
+                    style="
+                        display:none;
+                        width:100%;
+                        margin-top:20px;
+                        border-radius:20px;
+                    "
                 />
 
-                <!-- INPUT -->
 
-                <input
-                    type="text"
-                    id="foodInput"
+                <!-- DESCRIPTION -->
+
+                <textarea
+                    id="foodDescription"
                     placeholder="Describe your food..."
-                />
+                ></textarea>
 
-                <!-- BUTTON -->
+
+                <!-- ANALYZE BUTTON -->
 
                 <button id="analyzeBtn">
 
@@ -211,79 +221,28 @@
 
                 </button>
 
+
                 <!-- RESULT -->
 
-                <div
-                    id="resultCard"
-                    class="result-card"
-                    style="display:none;"
-                >
-
-                    <h2 id="foodTitle">
-
-                        Food
-
-                    </h2>
-
-                    <div class="calorie-circle">
-
-                        <h1 id="foodCalories">
-                            0
-                        </h1>
-
-                        <span>kcal</span>
-
-                    </div>
-
-                    <div class="macro-grid">
-
-                        <div class="macro-box">
-
-                            <p>💪 Protein</p>
-
-                            <h3 id="protein">
-                                0g
-                            </h3>
-
-                        </div>
-
-                        <div class="macro-box">
-
-                            <p>⚡ Carbs</p>
-
-                            <h3 id="carbs">
-                                0g
-                            </h3>
-
-                        </div>
-
-                        <div class="macro-box">
-
-                            <p>🥑 Fat</p>
-
-                            <h3 id="fat">
-                                0g
-                            </h3>
-
-                        </div>
-
-                    </div>
+                <div id="resultContainer">
 
                 </div>
 
-            </div>
+            </section>
 
-            <!-- RECENT -->
 
-            <div class="glass-card recent-card">
+
+            <!-- RIGHT -->
+
+            <section class="recent-card glass-card">
 
                 <h2>
                     📊 Recent Analysis
                 </h2>
 
-                <div id="recentMeals">
+                <div id="recentAnalysis">
 
-                    <div class="recent-item">
+                    <div class="recent-meal">
 
                         No recent meals yet
 
@@ -291,13 +250,26 @@
 
                 </div>
 
-            </div>
+            </section>
 
-        </section>
+        </div>
 
-    </main>
+    </div>
 
-    <script src="script.js"></script>
+
+
+    <!-- CHART JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js">
+
+    </script>
+
+
+    <!-- SCRIPT -->
+
+    <script src="script.js">
+
+    </script>
 
 </body>
 
