@@ -406,3 +406,199 @@ body{
     }
 
 }
+/* ANALYSIS SECTION */
+
+.analysis-grid{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:30px;
+
+    margin-top:30px;
+}
+
+.analysis-card{
+
+    padding:35px;
+}
+
+.analysis-card h1{
+
+    font-size:48px;
+
+    margin-bottom:10px;
+
+    color:white;
+}
+
+.analysis-card p{
+
+    color:#a0a0c0;
+
+    margin-bottom:25px;
+}
+
+
+/* UPLOAD SECTION */
+
+.upload-section{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+}
+
+
+/* UPLOAD BUTTON */
+
+.upload-box{
+
+    width:100%;
+
+    background:#15182d;
+
+    border:2px dashed rgba(255,255,255,0.1);
+
+    border-radius:18px;
+
+    padding:22px;
+
+    text-align:center;
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.upload-box:hover{
+
+    border-color:#a855f7;
+
+    transform:translateY(-2px);
+}
+
+
+/* TEXTAREA */
+
+#foodDescription{
+
+    width:100%;
+
+    min-height:90px;
+
+    background:#15182d;
+
+    border:none;
+
+    border-radius:18px;
+
+    padding:18px;
+
+    color:white;
+
+    font-size:15px;
+
+    resize:none;
+
+    outline:none;
+}
+
+
+/* BUTTON */
+
+#analyzeBtn{
+
+    width:100%;
+
+    border:none;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:linear-gradient(
+        90deg,
+        #ff00cc,
+        #3366ff
+    );
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+#analyzeBtn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 0 25px rgba(255,0,200,0.5);
+}
+
+
+/* IMAGE */
+
+#previewImage{
+
+    width:100%;
+
+    border-radius:20px;
+
+    object-fit:cover;
+
+    max-height:400px;
+}
+
+
+/* RECENT */
+
+.recent-card{
+
+    padding:25px;
+}
+
+.recent-card h2{
+
+    margin-bottom:20px;
+}
+
+.recent-meal{
+
+    background:#15182d;
+
+    padding:15px;
+
+    border-radius:14px;
+
+    margin-bottom:15px;
+
+    color:white;
+}
+
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .analysis-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .analysis-card h1{
+
+        font-size:34px;
+    }
+}
