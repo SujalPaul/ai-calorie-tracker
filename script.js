@@ -4,62 +4,40 @@ document.getElementById("foodImage");
 const previewImage =
 document.getElementById("previewImage");
 
+const foodDescription =
+document.getElementById("foodDescription");
+
 const analyzeBtn =
 document.getElementById("analyzeBtn");
 
-const resultCard =
-document.getElementById("resultCard");
+const resultContainer =
+document.getElementById("resultContainer");
 
-const foodTitle =
-document.getElementById("foodTitle");
+const caloriesValue =
+document.getElementById("caloriesValue");
 
-const foodCalories =
-document.getElementById("foodCalories");
+const mealsValue =
+document.getElementById("mealsValue");
 
-const protein =
-document.getElementById("protein");
+const remainingValue =
+document.getElementById("remainingValue");
 
-const carbs =
-document.getElementById("carbs");
+const progressValue =
+document.getElementById("progressValue");
 
-const fat =
-document.getElementById("fat");
+const recentAnalysis =
+document.getElementById("recentAnalysis");
 
-const totalCalories =
-document.getElementById("totalCalories");
-
-const mealCount =
-document.getElementById("mealCount");
-
-const remainingCalories =
-document.getElementById("remainingCalories");
-
-const progressPercent =
-document.getElementById("progressPercent");
-
-const progressFill =
-document.getElementById("progressFill");
-
-const recentMeals =
-document.getElementById("recentMeals");
-
-/* TOTALS */
-
-let currentCalories = 0;
+let totalCalories = 0;
 
 let meals = 0;
 
-let totalProtein = 0;
-let totalCarbs = 0;
-let totalFat = 0;
-
-/* IMAGE STORAGE */
+const goalCalories = 2000;
 
 let uploadedBase64 = "";
 
-/* IMAGE PREVIEW */
 
-let uploadedBase64 = "";
+/* IMAGE UPLOAD + COMPRESS */
 
 foodImageInput.addEventListener("change", (e) => {
 
@@ -69,27 +47,33 @@ foodImageInput.addEventListener("change", (e) => {
 
     const reader = new FileReader();
 
-    reader.onload = function(event){
+    reader.onload = (event) => {
 
         const img = new Image();
 
-        img.onload = function(){
+        img.onload = () => {
 
             const canvas =
             document.createElement("canvas");
 
-            const MAX_WIDTH = 512;
-
-            const scaleSize =
-            MAX_WIDTH / img.width;
-
-            canvas.width = MAX_WIDTH;
-
-            canvas.height =
-            img.height * scaleSize;
-
             const ctx =
             canvas.getContext("2d");
+
+            const MAX_WIDTH = 512;
+
+            let width = img.width;
+            let height = img.height;
+
+            if (width > MAX_WIDTH) {
+
+                height =
+                height * (MAX_WIDTH / width);
+
+                width = MAX_WIDTH;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
 
             ctx.drawImage(
 
@@ -98,27 +82,26 @@ foodImageInput.addEventListener("change", (e) => {
                 0,
                 0,
 
-                canvas.width,
-                canvas.height
+                width,
+                height
             );
 
-            const compressedBase64 =
+            const compressedImage =
             canvas.toDataURL(
 
                 "image/jpeg",
 
-                0.6
+                0.7
             );
 
             previewImage.src =
-            compressedBase64;
+            compressedImage;
 
             previewImage.style.display =
             "block";
 
             uploadedBase64 =
-            compressedBase64
-            .split(",")[1];
+            compressedImage.split(",")[1];
 
             console.log(
                 "Compressed image ready"
@@ -130,165 +113,16 @@ foodImageInput.addEventListener("change", (e) => {
     };
 
     reader.readAsDataURL(file);
-
 });
 
-/* CALORIE CHART */
 
-const calorieCtx =
-document
-.getElementById("calorieChart")
-.getContext("2d");
-
-const calorieChart =
-new Chart(calorieCtx, {
-
-    type: "line",
-
-    data: {
-
-        labels: [],
-
-        datasets: [{
-
-            label: "Calories",
-
-            data: [],
-
-            borderColor: "#7c4dff",
-
-            backgroundColor:
-            "rgba(124,77,255,0.2)",
-
-            tension: 0.4,
-
-            fill: true,
-
-            pointRadius: 5,
-
-            pointBackgroundColor:
-            "#ff00c8"
-
-        }]
-    },
-
-    options: {
-
-        responsive: true,
-
-        plugins: {
-
-            legend: {
-
-                labels: {
-
-                    color: "white"
-                }
-            }
-        },
-
-        scales: {
-
-            x: {
-
-                ticks: {
-
-                    color: "white"
-                },
-
-                grid: {
-
-                    color:
-                    "rgba(255,255,255,0.05)"
-                }
-            },
-
-            y: {
-
-                ticks: {
-
-                    color: "white"
-                },
-
-                grid: {
-
-                    color:
-                    "rgba(255,255,255,0.05)"
-                }
-            }
-        }
-    }
-});
-
-/* MACRO CHART */
-
-const macroCtx =
-document
-.getElementById("macroChart")
-.getContext("2d");
-
-const macroChart =
-new Chart(macroCtx, {
-
-    type: "doughnut",
-
-    data: {
-
-        labels: [
-            "Protein",
-            "Carbs",
-            "Fat"
-        ],
-
-        datasets: [{
-
-            data: [0,0,0],
-
-            backgroundColor: [
-
-                "#ff00c8",
-                "#7c4dff",
-                "#2563eb"
-            ],
-
-            borderWidth: 0
-        }]
-    },
-
-    options: {
-
-        responsive: true,
-
-        plugins: {
-
-            legend: {
-
-                labels: {
-
-                    color: "white"
-                }
-            }
-        }
-    }
-});
-
-/* ANALYZE */
+/* ANALYZE FOOD */
 
 analyzeBtn.addEventListener("click", async () => {
 
-    const food =
-    document
-    .getElementById("foodInput")
-    .value;
+    if (!uploadedBase64) {
 
-    if(
-        food.trim() === "" &&
-        uploadedBase64 === ""
-    ){
-
-        alert(
-            "Upload image or enter food name"
-        );
+        alert("Please upload a food image");
 
         return;
     }
@@ -296,9 +130,7 @@ analyzeBtn.addEventListener("click", async () => {
     analyzeBtn.innerText =
     "Analyzing...";
 
-    analyzeBtn.disabled = true;
-
-    try{
+    try {
 
         const response =
         await fetch("/api/analyze-food", {
@@ -306,156 +138,158 @@ analyzeBtn.addEventListener("click", async () => {
             method: "POST",
 
             headers: {
+
                 "Content-Type":
                 "application/json"
             },
 
             body: JSON.stringify({
 
-                food,
+                image: uploadedBase64,
 
-                image: uploadedBase64
+                description:
+                foodDescription.value
             })
         });
 
         const data =
         await response.json();
 
-        if(data.error){
+        console.log(data);
 
-            alert(data.error);
+        if (!data.success) {
+
+            alert(
+                data.error ||
+                "AI analysis failed"
+            );
 
             analyzeBtn.innerText =
             "Analyze Nutrition";
 
-            analyzeBtn.disabled =
-            false;
-
             return;
         }
 
-        const calories =
-        Number(data.calories);
+        const nutrition =
+        data.result;
 
-        const proteinValue =
-        Number(data.protein);
+        showResult(nutrition);
 
-        const carbsValue =
-        Number(data.carbs);
+        updateDashboard(nutrition);
 
-        const fatValue =
-        Number(data.fat);
+        addRecentMeal(nutrition);
 
-        /* SHOW RESULT */
+        analyzeBtn.innerText =
+        "Analyze Nutrition";
 
-        resultCard.style.display =
-        "block";
-
-        foodTitle.innerText =
-        data.name || food;
-
-        foodCalories.innerText =
-        calories;
-
-        protein.innerText =
-        proteinValue + "g";
-
-        carbs.innerText =
-        carbsValue + "g";
-
-        fat.innerText =
-        fatValue + "g";
-
-        /* UPDATE TOTALS */
-
-        currentCalories += calories;
-
-        meals++;
-
-        totalProtein += proteinValue;
-
-        totalCarbs += carbsValue;
-
-        totalFat += fatValue;
-
-        /* DASHBOARD */
-
-        totalCalories.innerText =
-        currentCalories;
-
-        mealCount.innerText =
-        meals;
-
-        remainingCalories.innerText =
-        Math.max(
-            2000 - currentCalories,
-            0
-        );
-
-        const progress =
-        Math.min(
-            (currentCalories / 2000) * 100,
-            100
-        );
-
-        progressPercent.innerText =
-        progress.toFixed(0) + "%";
-
-        progressFill.style.width =
-        progress + "%";
-
-        /* RECENT */
-
-        const item =
-        document.createElement("div");
-
-        item.className =
-        "recent-item";
-
-        item.innerHTML = `
-            🍜 ${data.name}
-            <br>
-            ${calories} kcal
-        `;
-
-        recentMeals.prepend(item);
-
-        /* CALORIE CHART */
-
-        calorieChart.data.labels.push(
-            "Meal " + meals
-        );
-
-        calorieChart.data.datasets[0].data.push(
-            calories
-        );
-
-        calorieChart.update();
-
-        /* MACRO CHART */
-
-        macroChart.data.datasets[0].data = [
-
-            totalProtein,
-            totalCarbs,
-            totalFat
-        ];
-
-        macroChart.update();
-
-    }
-
-    catch(error){
+    } catch (error) {
 
         console.log(error);
 
-        alert("AI analysis failed");
+        alert("Something went wrong");
 
+        analyzeBtn.innerText =
+        "Analyze Nutrition";
     }
-
-    analyzeBtn.innerText =
-    "Analyze Nutrition";
-
-    analyzeBtn.disabled = false;
-
 });
+
+
+/* SHOW RESULT */
+
+function showResult(data) {
+
+    resultContainer.innerHTML = `
+
+    <div class="nutrition-card">
+
+        <h2>${data.food}</h2>
+
+        <div class="nutrition-circle">
+
+            <h1>${data.calories}</h1>
+
+            <p>kcal</p>
+
+        </div>
+
+        <div class="nutrition-grid">
+
+            <div class="nutrition-box">
+
+                <h3>Protein</h3>
+
+                <p>${data.protein}g</p>
+
+            </div>
+
+            <div class="nutrition-box">
+
+                <h3>Carbs</h3>
+
+                <p>${data.carbs}g</p>
+
+            </div>
+
+            <div class="nutrition-box">
+
+                <h3>Fat</h3>
+
+                <p>${data.fat}g</p>
+
+            </div>
+
+        </div>
+
+    </div>
+    `;
+}
+
+
+/* UPDATE DASHBOARD */
+
+function updateDashboard(data) {
+
+    totalCalories += Number(data.calories);
+
+    meals++;
+
+    caloriesValue.innerText =
+    totalCalories;
+
+    mealsValue.innerText =
+    meals;
+
+    remainingValue.innerText =
+    goalCalories - totalCalories;
+
+    const progress =
+    Math.min(
+
+        (totalCalories / goalCalories) * 100,
+
+        100
+    );
+
+    progressValue.innerText =
+    `${Math.round(progress)}%`;
+}
+
+
+/* RECENT MEALS */
+
+function addRecentMeal(data) {
+
+    const meal =
+    document.createElement("div");
+
+    meal.classList.add("recent-meal");
+
+    meal.innerHTML = `
+
+        <p>🍱 ${data.food}</p>
+
+        <span>${data.calories} kcal</span>
+    `;
+
+    recentAnalysis.prepend(meal);
+}
