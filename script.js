@@ -1,3 +1,37 @@
+const caloriesCtx = document.getElementById("caloriesChart");
+
+const macroCtx = document.getElementById("macroChart");
+
+const caloriesChart = new Chart(caloriesCtx, {
+    type: "bar",
+
+    data: {
+        labels: [],
+        datasets: [{
+            label: "Calories",
+            data: [],
+            backgroundColor: "#c026d3"
+        }]
+    }
+});
+
+const macroChart = new Chart(macroCtx, {
+    type: "doughnut",
+
+    data: {
+        labels: ["Protein", "Carbs", "Fat"],
+
+        datasets: [{
+            data: [0, 0, 0],
+
+            backgroundColor: [
+                "#ff00c8",
+                "#7c3aed",
+                "#2563eb"
+            ]
+        }]
+    }
+});
 const foodImage =
 document.getElementById("foodImage");
 
@@ -97,7 +131,19 @@ analyzeBtn.addEventListener("click", async () => {
 
         const data =
         await response.json();
+caloriesChart.data.labels.push(data.name);
 
+caloriesChart.data.datasets[0].data.push(data.calories);
+
+caloriesChart.update();
+
+macroChart.data.datasets[0].data = [
+    data.protein,
+    data.carbs,
+    data.fat
+];
+
+macroChart.update();
         console.log(data);
 
         if (data.error) {
