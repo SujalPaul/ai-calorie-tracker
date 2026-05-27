@@ -1,79 +1,65 @@
 export default async function handler(req, res) {
 
-    if (req.method !== "POST") {
-
-        return res.status(405).json({
-            error: "Method not allowed"
-        });
-    }
-
     try {
-
-        const { food, image } = req.body;
 
         const GEMINI_API_KEY =
         process.env.GEMINI_API_KEY;
 
+        if (!GEMINI_API_KEY) {
+
+            return res.status(500).json({
+
+                success: false,
+
+                error:
+                "Missing Gemini API key"
+            });
+        }
+
+        const { image, description } =
+        req.body;
+
+        if (!image) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                error:
+                "No image provided"
+            });
+        }
+
         const prompt = `
-        Analyze this food.
+
+        Analyze this food image.
 
         Return ONLY valid JSON.
 
         Format:
 
         {
-          "name": "",
-          "calories": 0,
-          "protein": 0,
-          "carbs": 0,
-          "fat": 0
+          "food": "food name",
+          "calories": 450,
+          "protein": 20,
+          "carbs": 40,
+          "fat": 15
         }
+
+        Food description:
+        ${description || "No description"}
         `;
 
-        let parts = [];
+        const response = await fetch(
 
-        /* IMAGE MODE */
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
 
-        if(image){
-
-            parts = [
-
-                {
-                    text: prompt
-                },
-
-                {
-                    inlineData: {
-
-                        mimeType: "image/jpeg",
-
-                        data: image
-                    }
-                }
-            ];
-        }
-
-        /* TEXT MODE */
-
-        else{
-
-            parts = [
-
-                {
-                    text:
-                    prompt + "\nFood: " + food
-                }
-            ];
-        }
-
-       const response = await fetch(
-
-`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
             {
 
                 method: "POST",
 
                 headers: {
+
                     "Content-Type":
                     "application/json"
                 },
@@ -83,9 +69,22 @@ export default async function handler(req, res) {
                     contents: [
 
                         {
-                            role: "user",
+                            parts: [
 
-                            parts
+                                {
+                                    text: prompt
+                                },
+
+                                {
+                                    inline_data: {
+
+                                        mime_type:
+                                        "image/jpeg",
+
+                                        data: image
+                                    }
+                                }
+                            ]
                         }
                     ]
                 })
@@ -95,61 +94,60 @@ export default async function handler(req, res) {
         const data =
         await response.json();
 
-        console.log(JSON.stringify(data));
+        console.log(data);
 
-        const text =
-        data?.candidates?.[0]
-        ?.content?.parts?.[0]
-        ?.text;
-
-        if(!text){
+        if (data.error) {
 
             return res.status(500).json({
 
+                success: false,
+
                 error:
-                data?.error?.message ||
+                data.error.message
+            });
+        }
+
+        const text =
+        data.candidates?.[0]
+        ?.content?.parts?.[0]
+        ?.text;
+
+        if (!text) {
+
+            return res.status(500).json({
+
+                success: false,
+
+                error:
                 "No AI response"
             });
         }
 
-        const cleanText =
-        text
-        .replace(/```json/g, "")
-        .replace(/```/g, "")
-        .trim();
+        const cleaned =
+        text.replace(/```json/g, "")
+            .replace(/```/g, "")
+            .trim();
 
-        let nutrition;
+        const nutrition =
+        JSON.parse(cleaned);
 
-        try{
+        return res.status(200).json({
 
-            nutrition =
-            JSON.parse(cleanText);
+            success: true,
 
-        }
+            result: nutrition
+        });
 
-        catch{
-
-            return res.status(500).json({
-
-                error:
-                "Invalid AI JSON",
-
-                raw: cleanText
-            });
-        }
-
-        res.status(200).json(nutrition);
-
-    }
-
-    catch(error){
+    } catch (error) {
 
         console.log(error);
 
-        res.status(500).json({
+        return res.status(500).json({
+
+            success: false,
 
             error:
-            "AI analysis failed"
+            error.message
         });
     }
 }
