@@ -67,12 +67,54 @@ document.querySelector(".progress-fill");
 
 /* TOTALS */
 
-let totalCalories = 0;
+let totalCalories =
+Number(localStorage.getItem("totalCalories")) || 0;
 
-let totalMeals = 0;
+let totalMeals =
+Number(localStorage.getItem("totalMeals")) || 0;
+
+caloriesValue.innerText = totalCalories;
+
+mealsValue.innerText = totalMeals;
+
+remainingValue.innerText =
+Math.max(2000 - totalCalories, 0);
+
+const savedProgress =
+Math.min((totalCalories / 2000) * 100, 100);
+
+progressValue.innerText =
+`${Math.round(savedProgress)}%`;
+
+progressFill.style.width =
+`${savedProgress}%`;
 
 /* IMAGE PREVIEW */
+window.addEventListener("load", () => {
 
+    const savedMeals =
+    JSON.parse(
+        localStorage.getItem("recentMeals")
+    ) || [];
+
+    savedMeals.forEach(item => {
+
+        const meal =
+        document.createElement("div");
+
+        meal.classList.add(
+            "recent-meal"
+        );
+
+        meal.innerHTML = `
+            <p>🍱 ${item.name}</p>
+            <span>${item.calories} kcal</span>
+        `;
+
+        recentAnalysis.appendChild(meal);
+    });
+
+});
 foodImage.addEventListener("change", (e) => {
 
     const file = e.target.files[0];
@@ -228,9 +270,17 @@ macroChart.update();
 
         totalCalories +=
         Number(data.calories);
-
+        
         totalMeals++;
+        localStorage.setItem(
+    "totalCalories",
+    totalCalories
+);
 
+localStorage.setItem(
+    "totalMeals",
+    totalMeals
+);
         caloriesValue.innerText =
         totalCalories;
 
@@ -276,6 +326,21 @@ macroChart.update();
         `;
 
         recentAnalysis.prepend(meal);
+
+const savedMeals =
+JSON.parse(
+    localStorage.getItem("recentMeals")
+) || [];
+
+savedMeals.unshift({
+    name: data.name,
+    calories: data.calories
+});
+
+localStorage.setItem(
+    "recentMeals",
+    JSON.stringify(savedMeals)
+);
 
     }
 
